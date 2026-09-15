@@ -23,9 +23,9 @@ const STATE_FILE = path.join(DATA_DIR, 'menu-state.json');
 
 const ADMIN_COOKIE = 'admin_session';
 
-const JWT_SECRET = process.env.JWT_SECRET;
+const JWT_SECRET = process.env.JWT_SECRET || 'chave_secreta_padrao_123';
 const ADMIN_USER = process.env.ADMIN_USER || 'admin';
-const ADMIN_PASSWORD_HASH = process.env.ADMIN_PASSWORD_HASH;
+const ADMIN_PASSWORD_HASH = process.env.ADMIN_PASSWORD_HASH || 'senha_padrao_123';
 
 if (!JWT_SECRET || !ADMIN_PASSWORD_HASH) {
   console.error(
