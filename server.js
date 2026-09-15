@@ -469,29 +469,22 @@ function requireAdmin(req, res, next) {
    ========================================================= */
 
 function sameOrigin(req, res, next) {
-
-  const origin =
-    req.get('origin');
-
+  const origin = req.get('origin');
   if (!origin) {
     return next();
   }
 
+  // Lista de origens permitidas (local e Render)
+  const allowedOrigins = [
+    'http://localhost:3000',
+    'https://sistema-delivery-2in1.onrender.com'
+  ];
 
-  const expected =
-    `${req.protocol}://${req.get('host')}`;
-
-
-  if (origin !== expected) {
-
-    return res.status(403).json({
-      erro: 'Origem não autorizada.'
-    });
-
+  if (allowedOrigins.includes(origin)) {
+    return next();
   }
 
-
-  next();
+  return res.status(403).json({ erro: 'Origem não autorizada.' });
 }
 
 
