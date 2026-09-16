@@ -1196,67 +1196,35 @@ app.post(
     const envUser = process.env.ADMIN_USER || 'admin';
     const envHash = process.env.ADMIN_PASSWORD_HASH;
 
-    const userOk = String(username || '').trim().toLowerCase() === String(envUser).trim().toLowerCase();
+    const userOk = username.toLowerCase() === envUser.toLowerCase();
 
     let passOk = false;
-    if (envHash) {
+    if (envHash && password) {
       passOk = await bcrypt.compare(password, envHash).catch(() => false);
-      if (!passOk) {
-        passOk = (password === envHash);
-      }
     }
 
     if (!userOk || !passOk) {
       return res.status(401).json({ erro: 'Usuário ou senha inválidos.' });
     }
 
-    res.cookie(ADMIN_COOKIE, 'true', {
+    // Gerando o token JWT
+    const token = jwt.sign(
+      { sub: username, role: 'admin' },
+      JWT_SECRET,
+      { expiresIn: '8h' }
+    );
+
+    // Salvando o token JWT no Cookie
+    res.cookie(ADMIN_COOKIE, token, {
       httpOnly: true,
       sameSite: 'lax',
-      secure: process.env.NODE_ENV === 'production'
+      secure: process.env.NODE_ENV === 'production',
+      maxAge: 8 * 60 * 60 * 1000
     });
 
     return res.json({ ok: true });
   }
 );
-const token =
-  jwt.sign(
-    {
-      sub: ADMIN_USER,
-      role: 'admin'
-    },
-    JWT_SECRET,
-    {
-      expiresIn: '8h'
-    }
-  );
-
-
-res.cookie(
-  ADMIN_COOKIE,
-  token,
-  {
-
-    httpOnly: true,
-
-    secure:
-      process.env.NODE_ENV ===
-      'production',
-
-    sameSite: 'strict',
-
-    maxAge:
-      8 * 60 * 60 * 1000,
-
-    path: '/'
-
-  }
-);
-
-
-res.json({
-  ok: true
-});
 
 
 /* =========================================================
@@ -1296,7 +1264,7 @@ app.post(
           process.env.NODE_ENV ===
           'production',
 
-        sameSite: 'strict',
+        sameSite: 'lax',
 
         path: '/'
       }
