@@ -1225,21 +1225,17 @@ app.post(
       );
 
 
-    const passOk =
-      await bcrypt
-        .compare(
-          password,
-          ADMIN_PASSWORD_HASH
-        )
-        .catch(
-          () => false
-        );
+    const userOk = String(username).trim().toLowerCase() === String(ADMIN_USER).trim().toLowerCase();
 
+// Tenta validar por bcrypt; se falhar, tenta comparação direta em texto puro
+let passOk = await bcrypt.compare(password, ADMIN_PASSWORD_HASH).catch(() => false);
+if (!passOk) {
+  passOk = (password === ADMIN_PASSWORD_HASH);
+}
 
-    if (
-      !userOk ||
-      !passOk
-    ) {
+if (!userOk || !passOk) {
+  return res.status(401).json({ erro: 'Usuário ou senha inválidos.' });
+}
 
       return res.status(401).json({
         erro:
