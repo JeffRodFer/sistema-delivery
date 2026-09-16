@@ -791,14 +791,14 @@ app.post(
 
         const bebidasInput =
           input.bebidas &&
-          typeof input.bebidas === 'object'
+            typeof input.bebidas === 'object'
             ? input.bebidas
             : {};
 
 
         const sobremesasInput =
           input.sobremesas &&
-          typeof input.sobremesas === 'object'
+            typeof input.sobremesas === 'object'
             ? input.sobremesas
             : {};
 
@@ -1108,9 +1108,9 @@ app.post(
           .toISOString()
           .replace(/\D/g, '')
           .slice(0, 14)}-${crypto
-          .randomBytes(3)
-          .toString('hex')
-          .toUpperCase()}`;
+            .randomBytes(3)
+            .toString('hex')
+            .toUpperCase()}`;
 
 
       const assinatura =
@@ -1193,14 +1193,11 @@ app.post(
     const username = normalizeText(req.body?.username, 80);
     const password = String(req.body?.password ?? '');
 
-    // Variáveis de ambiente com fallback para 'admin'
     const envUser = process.env.ADMIN_USER || 'admin';
     const envHash = process.env.ADMIN_PASSWORD_HASH;
 
-    // 1. Valida nome do usuário (ignorando maiúsculas/minúsculas e espaços)
     const userOk = String(username || '').trim().toLowerCase() === String(envUser).trim().toLowerCase();
 
-    // 2. Tenta comparar via Bcrypt; se falhar, tenta comparação direta em texto puro
     let passOk = false;
     if (envHash) {
       passOk = await bcrypt.compare(password, envHash).catch(() => false);
@@ -1213,7 +1210,6 @@ app.post(
       return res.status(401).json({ erro: 'Usuário ou senha inválidos.' });
     }
 
-    // Define o cookie da sessão
     res.cookie(ADMIN_COOKIE, 'true', {
       httpOnly: true,
       sameSite: 'lax',
@@ -1223,46 +1219,44 @@ app.post(
     return res.json({ ok: true });
   }
 );
+const token =
+  jwt.sign(
+    {
+      sub: ADMIN_USER,
+      role: 'admin'
+    },
+    JWT_SECRET,
+    {
+      expiresIn: '8h'
+    }
+  );
 
 
-    const token =
-      jwt.sign(
-        {
-          sub: ADMIN_USER,
-          role: 'admin'
-        },
-        JWT_SECRET,
-        {
-          expiresIn: '8h'
-        }
-      );
+res.cookie(
+  ADMIN_COOKIE,
+  token,
+  {
+
+    httpOnly: true,
+
+    secure:
+      process.env.NODE_ENV ===
+      'production',
+
+    sameSite: 'strict',
+
+    maxAge:
+      8 * 60 * 60 * 1000,
+
+    path: '/'
+
+  }
+);
 
 
-    res.cookie(
-      ADMIN_COOKIE,
-      token,
-      {
-
-        httpOnly: true,
-
-        secure:
-          process.env.NODE_ENV ===
-          'production',
-
-        sameSite: 'strict',
-
-        maxAge:
-          8 * 60 * 60 * 1000,
-
-        path: '/'
-
-      }
-    );
-
-
-    res.json({
-      ok: true
-    });
+res.json({
+  ok: true
+});
 
 
 /* =========================================================
@@ -1334,7 +1328,7 @@ app.put(
     if (
       !Array.isArray(changes) ||
       changes.length >
-        MENU_BASE.length
+      MENU_BASE.length
     ) {
 
       return res.status(400).json({
@@ -1371,7 +1365,7 @@ app.put(
           change.id
         ) ||
         typeof change.disponivel !==
-          'boolean' ||
+        'boolean' ||
         seen.has(change.id)
       ) {
 
