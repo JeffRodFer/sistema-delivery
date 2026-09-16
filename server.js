@@ -1218,7 +1218,8 @@ app.post(
       httpOnly: true,
       sameSite: 'lax',
       secure: process.env.NODE_ENV === 'production'
-    });
+    }
+  );
 
     return res.json({ ok: true });
   }
