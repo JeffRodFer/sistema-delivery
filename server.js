@@ -1190,59 +1190,39 @@ app.post(
   loginLimiter,
   sameOrigin,
   async (req, res) => {
+    const username = normalizeText(req.body?.username, 80);
+    const password = String(req.body?.password ?? '');
 
-    const username =
-      normalizeText(
-        req.body?.username,
-        80
-      );
+    // Variáveis de ambiente com fallback para 'admin'
+    const envUser = process.env.ADMIN_USER || 'admin';
+    const envHash = process.env.ADMIN_PASSWORD_HASH;
 
+    // 1. Valida nome do usuário (ignorando maiúsculas/minúsculas e espaços)
+    const userOk = String(username || '').trim().toLowerCase() === String(envUser).trim().toLowerCase();
 
-    const password =
-      String(
-        req.body?.password ?? ''
-      );
-
-
-    const expectedUser =
-      Buffer.from(
-        ADMIN_USER
-      );
-
-
-    const receivedUser =
-      Buffer.from(
-        username
-      );
-
-
-    const userOk =
-      receivedUser.length ===
-        expectedUser.length &&
-      crypto.timingSafeEqual(
-        receivedUser,
-        expectedUser
-      );
-
-
-    const userOk = String(username).trim().toLowerCase() === String(ADMIN_USER).trim().toLowerCase();
-
-// Tenta validar por bcrypt; se falhar, tenta comparação direta em texto puro
-let passOk = await bcrypt.compare(password, ADMIN_PASSWORD_HASH).catch(() => false);
-if (!passOk) {
-  passOk = (password === ADMIN_PASSWORD_HASH);
-}
-
-if (!userOk || !passOk) {
-  return res.status(401).json({ erro: 'Usuário ou senha inválidos.' });
-}
-
-      return res.status(401).json({
-        erro:
-          'Usuário ou senha inválidos.'
-      });
-
+    // 2. Tenta comparar via Bcrypt; se falhar, tenta comparação direta em texto puro
+    let passOk = false;
+    if (envHash) {
+      passOk = await bcrypt.compare(password, envHash).catch(() => false);
+      if (!passOk) {
+        passOk = (password === envHash);
+      }
     }
+
+    if (!userOk || !passOk) {
+      return res.status(401).json({ erro: 'Usuário ou senha inválidos.' });
+    }
+
+    // Define o cookie da sessão
+    res.cookie(ADMIN_COOKIE, 'true', {
+      httpOnly: true,
+      sameSite: 'lax',
+      secure: process.env.NODE_ENV === 'production'
+    });
+
+    return res.json({ ok: true });
+  }
+);
 
 
     const token =
@@ -1283,9 +1263,6 @@ if (!userOk || !passOk) {
     res.json({
       ok: true
     });
-
-  }
-);
 
 
 /* =========================================================
