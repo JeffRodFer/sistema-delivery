@@ -11,7 +11,16 @@ const jwt = require('jsonwebtoken');
 const cookieParser = require('cookie-parser');
 const helmet = require('helmet');
 const rateLimit = require('express-rate-limit');
+const { Pool } = require('pg');
 
+const dbUrl = process.env.DATABASE_URL || '';
+
+const pool = new Pool({
+  connectionString: dbUrl,
+  ssl: {
+    rejectUnauthorized: false
+  }
+});
 const app = express();
 
 const PORT = Number(process.env.PORT || 3000);
@@ -210,16 +219,29 @@ function writeState(state) {
   );
 }
 
+async function publicMenuFromDatabase() {
+  const result = await pool.query(`
+    SELECT
+      id,
+      categoria,
+      nome,
+      preco,
+      disponivel
+    FROM menu_items
+    ORDER BY id
+  `);
 
-function publicMenu() {
-  const state = safeReadState();
-
-  return MENU_BASE.map(item => ({
-    ...item,
-
-    disponivel:
-      state[item.id]?.disponivel !== false
+  return result.rows.map(item => ({
+    id: item.id,
+    categoria: item.categoria,
+    nome: item.nome,
+    preco: Number(item.preco),
+    disponivel: item.disponivel
   }));
+}
+
+async function publicMenu() {
+  return await publicMenuFromDatabase();
 }
 
 

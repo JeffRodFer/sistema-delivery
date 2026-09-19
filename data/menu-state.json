@@ -1,6 +1,6 @@
 {
   "guarnicao-1": {
-    "disponivel": true
+    "disponivel": false
   },
   "guarnicao-2": {
     "disponivel": true
@@ -27,7 +27,7 @@
     "disponivel": true
   },
   "proteina-1": {
-    "disponivel": true
+    "disponivel": false
   },
   "proteina-2": {
     "disponivel": true
@@ -36,100 +36,100 @@
     "disponivel": true
   },
   "proteina-4": {
-    "disponivel": false
+    "disponivel": true
   },
   "proteina-5": {
-    "disponivel": false
+    "disponivel": true
   },
   "proteina-6": {
-    "disponivel": false
+    "disponivel": true
   },
   "proteina-7": {
-    "disponivel": false
+    "disponivel": true
   },
   "proteina-8": {
-    "disponivel": false
+    "disponivel": true
   },
   "proteina-9": {
-    "disponivel": false
+    "disponivel": true
   },
   "proteina-10": {
-    "disponivel": false
+    "disponivel": true
   },
   "proteina-11": {
-    "disponivel": false
+    "disponivel": true
   },
   "proteina-12": {
-    "disponivel": false
+    "disponivel": true
   },
   "proteina-13": {
-    "disponivel": false
+    "disponivel": true
   },
   "proteina-14": {
-    "disponivel": false
+    "disponivel": true
   },
   "proteina-15": {
-    "disponivel": false
+    "disponivel": true
   },
   "proteina-16": {
-    "disponivel": false
+    "disponivel": true
   },
   "proteina-17": {
-    "disponivel": false
+    "disponivel": true
   },
   "proteina-18": {
-    "disponivel": false
+    "disponivel": true
   },
   "proteina-19": {
-    "disponivel": false
+    "disponivel": true
   },
   "proteina-20": {
-    "disponivel": false
+    "disponivel": true
   },
   "proteina-21": {
-    "disponivel": false
+    "disponivel": true
   },
   "proteina-22": {
-    "disponivel": false
+    "disponivel": true
   },
   "proteina-23": {
-    "disponivel": false
+    "disponivel": true
   },
   "proteina-24": {
-    "disponivel": false
+    "disponivel": true
   },
   "proteina-25": {
-    "disponivel": false
+    "disponivel": true
   },
   "proteina-26": {
-    "disponivel": false
+    "disponivel": true
   },
   "proteina-27": {
-    "disponivel": false
+    "disponivel": true
   },
   "proteina-28": {
-    "disponivel": false
+    "disponivel": true
   },
   "proteina-29": {
-    "disponivel": false
+    "disponivel": true
   },
   "proteina-30": {
-    "disponivel": false
+    "disponivel": true
   },
   "proteina-31": {
-    "disponivel": false
+    "disponivel": true
   },
   "proteina-32": {
-    "disponivel": false
+    "disponivel": true
   },
   "proteina-33": {
-    "disponivel": false
+    "disponivel": true
   },
   "proteina-34": {
-    "disponivel": false
+    "disponivel": true
   },
   "proteina-35": {
-    "disponivel": false
+    "disponivel": true
   },
   "bebida-gaseificada-1": {
     "disponivel": true
@@ -159,25 +159,25 @@
     "disponivel": true
   },
   "bebida-polpa-1": {
-    "disponivel": false
+    "disponivel": true
   },
   "bebida-polpa-2": {
-    "disponivel": false
+    "disponivel": true
   },
   "bebida-polpa-3": {
-    "disponivel": false
+    "disponivel": true
   },
   "bebida-polpa-4": {
-    "disponivel": false
+    "disponivel": true
   },
   "bebida-polpa-5": {
-    "disponivel": false
+    "disponivel": true
   },
   "bebida-polpa-6": {
-    "disponivel": false
+    "disponivel": true
   },
   "bebida-polpa-7": {
-    "disponivel": false
+    "disponivel": true
   },
   "sobremesa-1": {
     "disponivel": true
@@ -192,24 +192,24 @@
     "disponivel": true
   },
   "sobremesa-5": {
-    "disponivel": false
+    "disponivel": true
   },
   "sobremesa-6": {
-    "disponivel": false
+    "disponivel": true
   },
   "sobremesa-7": {
-    "disponivel": false
+    "disponivel": true
   },
   "sobremesa-8": {
-    "disponivel": false
+    "disponivel": true
   },
   "sobremesa-9": {
-    "disponivel": false
+    "disponivel": true
   },
   "sobremesa-10": {
-    "disponivel": false
+    "disponivel": true
   },
   "sobremesa-11": {
-    "disponivel": false
+    "disponivel": true
   }
 }
