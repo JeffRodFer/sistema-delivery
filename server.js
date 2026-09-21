@@ -602,13 +602,27 @@ app.use(cookieParser());
 
 app.get(
   '/api/menu',
-  (req, res) => {
+  async (req, res) => {
 
-    res.json({
-      basePrice: BASE_PRICE,
-      deliveryPrice: DELIVERY_PRICE,
-      itens: publicMenu()
-    });
+    try {
+      const itens = await publicMenu();
+
+      res.json({
+        basePrice: BASE_PRICE,
+        deliveryPrice: DELIVERY_PRICE,
+        itens
+      });
+
+    } catch (error) {
+      console.error(
+        'Erro ao carregar menu:',
+        error
+      );
+
+      res.status(500).json({
+        erro: 'Não foi possível carregar o menu.'
+      });
+    }
 
   }
 );
@@ -690,7 +704,7 @@ app.post(
   '/api/orders',
   orderLimiter,
   sameOrigin,
-  (req, res) => {
+  async (req, res) => {
 
     try {
 
@@ -774,12 +788,31 @@ app.post(
       }
 
 
-      const state =
-        safeReadState();
+      const menuResult =
+        await pool.query(`
+    SELECT
+      id,
+      categoria,
+      nome,
+      preco,
+      disponivel
+    FROM menu_items
+  `);
 
 
       const map =
-        catalog();
+        new Map(
+          menuResult.rows.map(item => [
+            item.id,
+            {
+              id: item.id,
+              categoria: item.categoria,
+              nome: item.nome,
+              preco: Number(item.preco),
+              disponivel: item.disponivel
+            }
+          ])
+        );
 
 
       const marmitas = [];
@@ -905,7 +938,7 @@ app.post(
 
 
           if (
-            state[item.id]?.disponivel === false
+            item.disponivel !== true
           ) {
 
             throw new Error(
@@ -1008,7 +1041,7 @@ app.post(
 
 
             if (
-              state[item.id]?.disponivel === false
+              item.disponivel !== true
             ) {
 
               throw new Error(
@@ -1016,7 +1049,6 @@ app.post(
               );
 
             }
-
 
             result.push({
               ...item,
@@ -1309,90 +1341,107 @@ app.put(
   '/api/admin/menu',
   requireAdmin,
   sameOrigin,
-  (req, res) => {
+  async (req, res) => {
 
-    const changes =
-      req.body?.changes;
+    try {
 
-
-    if (
-      !Array.isArray(changes) ||
-      changes.length >
-      MENU_BASE.length
-    ) {
-
-      return res.status(400).json({
-        erro:
-          'Dados de disponibilidade inválidos.'
-      });
-
-    }
-
-
-    const validIds =
-      new Set(
-        MENU_BASE.map(
-          item => item.id
-        )
-      );
-
-
-    const state =
-      safeReadState();
-
-
-    const seen =
-      new Set();
-
-
-    for (
-      const change of changes
-    ) {
+      const changes =
+        req.body?.changes;
 
       if (
-        !change ||
-        !validIds.has(
-          change.id
-        ) ||
-        typeof change.disponivel !==
-        'boolean' ||
-        seen.has(change.id)
+        !Array.isArray(changes) ||
+        changes.length >
+        MENU_BASE.length
       ) {
 
         return res.status(400).json({
           erro:
-            'Alteração de menu inválida.'
+            'Dados de disponibilidade inválidos.'
         });
 
       }
 
+      const validIds =
+        new Set(
+          MENU_BASE.map(
+            item => item.id
+          )
+        );
 
-      seen.add(
-        change.id
+      const seen =
+        new Set();
+
+      for (
+        const change of changes
+      ) {
+
+        if (
+          !change ||
+          !validIds.has(
+            change.id
+          ) ||
+          typeof change.disponivel !==
+          'boolean' ||
+          seen.has(change.id)
+        ) {
+
+          return res.status(400).json({
+            erro:
+              'Alteração de menu inválida.'
+          });
+
+        }
+
+        seen.add(
+          change.id
+        );
+
+      }
+
+      for (
+        const change of changes
+      ) {
+
+        await pool.query(
+          `
+            UPDATE menu_items
+            SET
+              disponivel = $1,
+              atualizado_em = NOW()
+            WHERE id = $2
+          `,
+          [
+            change.disponivel,
+            change.id
+          ]
+        );
+
+      }
+
+      const itens =
+        await publicMenu();
+
+      res.json({
+        ok: true,
+        itens
+      });
+
+    } catch (error) {
+
+      console.error(
+        'Erro ao atualizar disponibilidade do menu:',
+        error
       );
 
-
-      state[change.id] = {
-        disponivel:
-          change.disponivel
-      };
+      res.status(500).json({
+        erro:
+          'Não foi possível salvar o menu.'
+      });
 
     }
 
-
-    writeState(
-      state
-    );
-
-
-    res.json({
-      ok: true,
-      itens: publicMenu()
-    });
-
   }
 );
-
 
 /* =========================================================
    ARQUIVOS DO SITE
