@@ -674,7 +674,7 @@
     </div>
 
 
-    <button type="button" class="cta" id="openOrder">
+    <button class="cta" id="openOrder">
       Faça seu Pedido
     </button>
 
@@ -733,7 +733,7 @@
   </footer>
 
 
-  <button type="button" class="manage" id="openAdmin">
+  <button class="manage" id="openAdmin">
     Gerenciar ⚙️
   </button>
 
@@ -833,12 +833,12 @@
 
         <div class="actions">
 
-          <button type="button" class="btn gray" id="closeOrder1">
+          <button class="btn gray" id="closeOrder1">
             Cancelar
           </button>
 
 
-          <button type="button" class="btn green" id="toStep2">
+          <button class="btn green" id="toStep2">
             Continuar
           </button>
 
@@ -895,17 +895,17 @@
 
         <div class="actions">
 
-          <button type="button" class="btn red" id="cancelFinal">
+          <button class="btn red" id="cancelFinal">
             Voltar
           </button>
 
 
-          <button type="button" class="btn green" id="sendRestaurant">
+          <button class="btn green" id="sendRestaurant">
             1. Enviar Pedido ao Restaurante
           </button>
 
 
-          <button type="button" class="btn green" id="sendClient">
+          <button class="btn green" id="sendClient">
             2. Enviar Cópia para Meu WhatsApp
           </button>
 
@@ -962,12 +962,12 @@
 
         <div class="actions">
 
-          <button type="button" class="btn gray" id="closeAdminLogin">
+          <button class="btn gray" id="closeAdminLogin">
             Fechar
           </button>
 
 
-          <button type="button" class="btn green" id="adminLoginBtn">
+          <button class="btn green" id="adminLoginBtn">
             Entrar
           </button>
 
@@ -985,12 +985,12 @@
 
         <div class="actions">
 
-          <button type="button" class="btn gray" id="adminClose">
+          <button class="btn gray" id="adminClose">
             Fechar
           </button>
 
 
-          <button type="button" class="btn green" id="adminSave">
+          <button class="btn green" id="adminSave">
             Salvar alterações
           </button>
 
@@ -1377,27 +1377,6 @@
 
       orderState =
         null;
-
-      calculatedOrder =
-        null;
-
-      setStep(1);
-
-      clearErr(
-        'orderError1'
-      );
-
-      clearErr(
-        'orderError2'
-      );
-
-      openOverlay(
-        'orderOverlay'
-      );
-
-    };
-
-
     $('closeOrder1').onclick =
       () =>
         closeOverlay(
@@ -2196,34 +2175,39 @@
 
     /* PASSO 2 -> PASSO 3 */
 
-    $('toStep3').onclick =
-      async () => {
+   $('toStep3').onclick =
+  async (event) => {
 
-        const ok =
-          await calculateOrder();
+    event.preventDefault();
 
+    console.log('TESTE 1: clicou em Encerrar e seguir');
 
-        if (!ok) {
-          return;
-        }
+    const ok =
+      await calculateOrder();
 
+    console.log('TESTE 2: calculateOrder terminou:', ok);
 
-        $('orderSummary')
-          .textContent =
-          calculatedOrder
-            .mensagem;
+    if (!ok) {
+      return;
+    }
 
+    console.log('TESTE 3: antes de setStep(3)');
 
-        $('finalTotal')
-          .textContent =
-          `Total: ${money(
-            calculatedOrder.total
-          )}`;
+    $('orderSummary')
+      .textContent =
+      calculatedOrder
+        .mensagem;
 
+    $('finalTotal')
+      .textContent =
+      `Total: ${money(
+        calculatedOrder.total
+      )}`;
 
-        setStep(3);
+    setStep(3);
 
-      };
+    console.log('TESTE 4: depois de setStep(3)');
+  };
 
 
     /* WHATSAPP */
