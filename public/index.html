@@ -899,12 +899,6 @@
             Voltar
           </button>
 
-
-          <button class="btn green" id="sendRestaurant">
-            1. Enviar Pedido ao Restaurante
-          </button>
-
-
           <button class="btn green" id="sendClient">
             2. Enviar Cópia para Meu WhatsApp
           </button>
@@ -2264,66 +2258,7 @@
       };
 
 
-    /* CÓPIA PARA CLIENTE */
-
-    $('sendClient').onclick =
-      () => {
-
-        if (!calculatedOrder) {
-          return;
-        }
-
-
-        const phone =
-          orderState
-            .telefone;
-
-
-        if (phone.length < 10) {
-
-          alert(
-            'Telefone inválido.'
-          );
-
-          return;
-
-        }
-
-
-        let number =
-          phone;
-
-
-        if (
-          !number.startsWith('55')
-        ) {
-
-          number =
-            '55' +
-            number;
-
-        }
-
-
-        sendWA(
-          number
-        );
-
-
-        alert(
-          'Pedido Enviado!'
-        );
-
-
-        closeOverlay(
-          'orderOverlay'
-        );
-
-
-        resetOrder();
-
-      };
-
+    
 
     /* RESET */
 
