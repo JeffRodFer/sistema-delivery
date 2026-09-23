@@ -1375,8 +1375,18 @@
 
     $('openOrder').onclick = () => {
 
-      orderState =
-        null;
+      orderState = null;
+
+      if (typeof resetOrder === 'funcion'){
+        resetOrder();
+      }
+
+      setStep(1);
+
+      orderOverlay('orderOverlay')
+
+      openOverlay('orderOverlay');
+      setStep(1);
     };
 
     $('closeOrder1').onclick =
