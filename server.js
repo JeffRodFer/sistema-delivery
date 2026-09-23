@@ -491,19 +491,24 @@ function requireAdmin(req, res, next) {
    ========================================================= */
 
 function sameOrigin(req, res, next) {
-  const origin = req.get('origin');
+  const origin = req.get('origin') || req.get('referer');
+  
   if (!origin) {
     return next();
   }
 
-  // Lista de origens permitidas (local e Render)
+  // Remove barras no final para evitar falhas de comparação
+  const cleanOrigin = origin.replace(/\/$/, '');
+
   const allowedOrigins = [
     'http://localhost:3000',
     'https://sistema-delivery-2wl.onrender.com',
     'https://sistema-delivery-2in1.onrender.com'
   ];
 
-  if (allowedOrigins.includes(origin)) {
+  const isAllowed = allowedOrigins.some(allowed => cleanOrigin.startsWith(allowed));
+
+  if (isAllowed) {
     return next();
   }
 
