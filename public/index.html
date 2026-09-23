@@ -1373,21 +1373,13 @@
 
     /* ABRIR PEDIDO */
 
+    /* ABRIR PEDIDO */
     $('openOrder').onclick = () => {
-
       orderState = null;
-
-      if (typeof resetOrder === 'funcion'){
-        resetOrder();
-      }
-
-      setStep(1);
-
-      orderOverlay('orderOverlay')
-
-      openOverlay('orderOverlay');
+      openOverlay('orderOverlay'); // Certifique-se de usar openOverlay (com 'p')
       setStep(1);
     };
+
 
     $('closeOrder1').onclick =
       () =>
