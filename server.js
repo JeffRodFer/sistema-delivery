@@ -499,6 +499,7 @@ function sameOrigin(req, res, next) {
   // Lista de origens permitidas (local e Render)
   const allowedOrigins = [
     'http://localhost:3000',
+    'https://sistema-delivery-2wl.onrender.com',
     'https://sistema-delivery-2in1.onrender.com'
   ];
 
