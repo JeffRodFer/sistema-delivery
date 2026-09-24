@@ -997,8 +997,7 @@
     'use strict';
 
 
-    const WA_RESTAURANT =
-      '55819920036280';
+    
 
 
     let menu = [];
@@ -2225,32 +2224,36 @@
 
     /* RESTAURANTE */
 
-    $('sendRestaurant').onclick =
-      () => {
+    /* ENVIAR PEDIDO AO RESTAURANTE (VIA BACKEND PROTEGIDO) */
+$('sendRestaurant').onclick = async () => {
+  if (!calculatedOrder) return;
 
-        if (!calculatedOrder) {
-          return;
-        }
+  // Usa o formato do pedido gerado no front
+  const summaryText = typeof formatOrderMessage === 'function' 
+    ? formatOrderMessage(calculatedOrder) 
+    : $('orderSummary').innerText;
 
+  try {
+    const response = await fetch('/api/create-whatsapp-link', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ orderSummary: summaryText })
+    });
 
-        sendWA(
-          WA_RESTAURANT
-        );
+    const data = await response.json();
 
-
-        alert(
-          'Pedido Enviado!'
-        );
-
-
-        closeOverlay(
-          'orderOverlay'
-        );
-
-
-        resetOrder();
-
-      };
+    if (data.url) {
+      window.open(data.url, '_blank');
+      closeOverlay('orderOverlay');
+      resetOrder();
+    } else {
+      alert('Erro ao gerar o link para o WhatsApp.');
+    }
+  } catch (error) {
+    console.error('Erro ao conectar ao servidor:', error);
+    alert('Erro de conexão ao enviar o pedido.');
+  }
+};
 
 
     /* CÓPIA PARA CLIENTE */

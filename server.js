@@ -48,6 +48,28 @@ const BASE_PRICE = 20;
 const DELIVERY_PRICE = 5;
 
 
+/* ============================================================ */
+/* NUMERO DE TELEFONE DO RESTAURANTE:                               */
+/* ============================================================ */
+
+app.post('/api/create-whatsapp-link', (req, res) => {
+  // Pega o número protegido das variáveis de ambiente do Render
+  const RESTAURANT_PHONE = process.env.RESTAURANT_PHONE || '5581992003628';
+
+  const { orderSummary } = req.body;
+
+  if (!orderSummary) {
+    return res.status(400).json({ error: 'Resumo do pedido não fornecido.' });
+  }
+
+  // Gera a URL do WhatsApp no servidor
+  const encodedText = encodeURIComponent(orderSummary);
+  const whatsappUrl = `https://api.whatsapp.com/send?phone=${RESTAURANT_PHONE}&text=${encodedText}`;
+
+  return res.json({ url: whatsappUrl });
+});
+
+
 /* =========================================================
    CARDÁPIO OFICIAL
    ========================================================= */
@@ -492,7 +514,7 @@ function requireAdmin(req, res, next) {
 
 function sameOrigin(req, res, next) {
   const origin = req.get('origin') || req.get('referer');
-  
+
   if (!origin) {
     return next();
   }
