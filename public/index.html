@@ -726,7 +726,7 @@
       <a class="maps" href="https://maps.google.com/?q=Rua+Vermelha+02+Torre" target="_blank" rel="noopener">
         Abrir no Google Maps
       </a>
-  
+
 
     </div>
 
@@ -997,7 +997,7 @@
     'use strict';
 
 
-    
+
 
 
     let menu = [];
@@ -2224,41 +2224,43 @@
 
     /* RESTAURANTE */
 
-    /* ENVIAR PEDIDO AO RESTAURANTE (VIA BACKEND PROTEGIDO) */
-$('sendRestaurant').onclick = async () => {
-  if (!calculatedOrder) return;
+    /* ENVIAR PEDIDO AO RESTAURANTE (PROTEGIDO VIA BACKEND) */
+    $('sendRestaurant').onclick = async () => {
+      if (!calculatedOrder) return;
 
-  // Usa o formato do pedido gerado no front
-  const summaryText = typeof formatOrderMessage === 'function' 
-    ? formatOrderMessage(calculatedOrder) 
-    : $('orderSummary').innerText;
+      // Pega o texto exatamente como é exibido na tela no resumo
+      const summaryText = $('orderSummary').innerText;
 
-  try {
-    const response = await fetch('/api/create-whatsapp-link', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ orderSummary: summaryText })
-    });
+      try {
+        const response = await fetch('/api/create-whatsapp-link', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ orderSummary: summaryText })
+        });
 
-    const data = await response.json();
+        if (!response.ok) {
+          throw new Error(`Erro do servidor: ${response.status}`);
+        }
 
-    if (data.url) {
-      window.open(data.url, '_blank');
-      closeOverlay('orderOverlay');
-      resetOrder();
-    } else {
-      alert('Erro ao gerar o link para o WhatsApp.');
-    }
-  } catch (error) {
-    console.error('Erro ao conectar ao servidor:', error);
-    alert('Erro de conexão ao enviar o pedido.');
-  }
-};
+        const data = await response.json();
+
+        if (data.url) {
+          window.open(data.url, '_blank');
+          closeOverlay('orderOverlay');
+          resetOrder();
+        } else {
+          alert('Erro ao gerar o link para o WhatsApp.');
+        }
+      } catch (error) {
+        console.error('Erro na requisição:', error);
+        alert('Erro de conexão ao enviar o pedido.');
+      }
+    };
 
 
     /* CÓPIA PARA CLIENTE */
 
-   
+
 
     /* RESET */
 
