@@ -57,7 +57,7 @@ const DELIVERY_PRICE = 5;
 
 app.post('/api/create-whatsapp-link', (req, res) => {
   // Pega o número protegido das variáveis de ambiente do Render
-  const RESTAURANT_PHONE = process.env.RESTAURANT_PHONE || '5581992003628';
+  const RESTAURANT_PHONE = process.env.RESTAURANT_PHONE || '5581920036280';
 
   const { orderSummary } = req.body;
 
