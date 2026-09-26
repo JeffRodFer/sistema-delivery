@@ -1488,6 +1488,9 @@ app.use(
     }
   )
 );
+app.get('*',(req, res) => {
+  res.sendFile(path.join(PUBLIC_DIR, 'index.html'));
+});
 
 
 
