@@ -13,14 +13,20 @@ const helmet = require('helmet');
 const rateLimit = require('express-rate-limit');
 const { Pool } = require('pg');
 
-const dbUrl = process.env.DATABASE_URL || '';
+const dbUrl = process.env.DATABASE_URL;
 
-const pool = new Pool({
-  connectionString: dbUrl,
-  ssl: {
-    rejectUnauthorized: false
-  }
-});
+// Criamos o pool apenas se a URL do banco existir
+let pool = null;
+
+if (dbUrl) {
+  pool = new Pool({
+    connectionString: dbUrl,
+    ssl: { rejectUnauthorized: false }
+  });
+  console.log("Conexão com o banco configurada com sucesso.");
+} else {
+  console.log("DATABASE_URL não encontrada. Servidor rodando sem banco local.");
+}
 const app = express();
 
 app.use(express.json());
@@ -32,6 +38,15 @@ const ROOT = __dirname;
 const PUBLIC_DIR = path.join(ROOT, 'public');
 const DATA_DIR = path.join(ROOT, 'data');
 const STATE_FILE = path.join(DATA_DIR, 'menu-state.json');
+
+// --- ADICIONE ESTE BLOCO LOGO ABAIXO DAS CONSTANTES ---
+if (!fs.existsSync(DATA_DIR)) {
+  fs.mkdirSync(DATA_DIR, { recursive: true });
+}
+if (!fs.existsSync(STATE_FILE)) {
+  fs.writeFileSync(STATE_FILE, JSON.stringify({}, null, 2));
+}
+// ------------------------------------------------------
 
 const ADMIN_COOKIE = 'admin_session';
 
