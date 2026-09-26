@@ -2228,8 +2228,22 @@
     $('sendRestaurant').onclick = async () => {
       if (!calculatedOrder) return;
 
-      // Pega o texto exatamente como é exibido na tela no resumo
+      // 1. Lista de pratos que não exigem guarnições extras
+      const PRATOS_COMPLETOS = ['Arrumadinho', 'Feijoada', 'Yakisoba'];
+
+      // 2. Pega o texto do resumo exibido na tela
       const summaryText = $('orderSummary').innerText;
+
+      // 3. Verifica se o resumo contém algum dos pratos completos
+      const temPratoCompleto = PRATOS_COMPLETOS.some(prato =>
+        summaryText.toLowerCase().includes(prato.toLowerCase())
+      );
+
+      // 4. Se não for um prato completo e faltar alguma seleção obrigatória
+      if (!temPratoCompleto && calculatedOrder.guarnicoesCount === 0) {
+        alert('Por favor, selecione as guarnições antes de enviar o pedido.');
+        return; // Interrompe o envio
+      }
 
       try {
         const response = await fetch('/api/create-whatsapp-link', {

@@ -196,6 +196,8 @@ const MENU_BASE = [
   }))
 ];
 
+const PRATOS_COMPLETOS = ['Arrumadinho', 'Feijoada', 'Yakisoba'];
+
 
 /* =========================================================
    ESTADO DO CARDÁPIO
