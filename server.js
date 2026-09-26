@@ -1495,16 +1495,17 @@ app.put(
    ARQUIVOS DO SITE
    ========================================================= */
 
-app.use(
-  express.static(
-    PUBLIC_DIR,
-    {
-      extensions: ['html']
-    }
-  )
-);
-app.get('*',(req, res) => {
+// Servir arquivos estáticos da pasta public
+app.use(express.static(PUBLIC_DIR, { extensions: ['html'] }));
+
+// Rota fallback para entregar o index.html na raiz ou em qualquer rota não encontrada
+app.use((req, res) => {
   res.sendFile(path.join(PUBLIC_DIR, 'index.html'));
+});
+
+// Inicialização do servidor
+app.listen(PORT, () => {
+  console.log(`Restaurante do Irmão rodando na porta ${PORT}`);
 });
 
 
