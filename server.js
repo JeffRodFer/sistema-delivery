@@ -1515,47 +1515,36 @@ app.put(
 );
 
 /* =========================================================
-   ARQUIVOS DO SITE
+   ARQUIVOS DO SITE & FALLBACK
    ========================================================= */
 
 // Servir arquivos estáticos da pasta public
 app.use(express.static(PUBLIC_DIR, { extensions: ['html'] }));
 
-// Rota fallback para entregar o index.html na raiz ou em qualquer rota não encontrada
+// Rota fallback para entregar o index.html
 app.use((req, res) => {
   res.sendFile(path.join(PUBLIC_DIR, 'index.html'));
 });
 
-// Inicialização do servidor
-app.listen(PORT, () => {
-  console.log(`Restaurante do Irmão rodando na porta ${PORT}`);
-});
-
-
-
-
-
 /* =========================================================
-   INICIAR SERVIDOR
+   INICIAR SERVIDOR & ANTI-HIBERNAÇÃO
    ========================================================= */
-app.use(
-  (req, res) =>
-    res.sendFile(
-      path.join(
-        PUBLIC_DIR,
-        'index.html'
-      )
-    )
-);
+app.listen(PORT, () => {
+  console.log(`Restaurante do Irmão rodando em http://localhost:${PORT}`);
 
+  // --- ESTRATÉGIA ANTI-HIBERNAÇÃO (SELF-PING DO RENDER) ---
+  const RENDER_URL = process.env.RENDER_EXTERNAL_URL;
 
-app.listen(
-  PORT,
-  () => {
+  if (RENDER_URL) {
+    const PING_INTERVAL = 14 * 60 * 1000; // 14 minutos
 
-    console.log(
-      `Restaurante do Irmão rodando em http://localhost:${PORT}`
-    );
-
+    setInterval(async () => {
+      try {
+        const response = await fetch(`${RENDER_URL}/api/config`);
+        console.log(`[Anti-SpinDown] Ping executado com sucesso: Status ${response.status}`);
+      } catch (error) {
+        console.error('[Anti-SpinDown] Erro ao executar ping:', error.message);
+      }
+    }, PING_INTERVAL);
   }
-);
+});
