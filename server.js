@@ -38,15 +38,20 @@ const ROOT = __dirname;
 const PUBLIC_DIR = path.join(ROOT, 'public');
 const DATA_DIR = path.join(ROOT, 'data');
 const STATE_FILE = path.join(DATA_DIR, 'menu-state.json');
+const CONFIG_FILE = path.join(DATA_DIR, 'config.json');
 
-// --- ADICIONE ESTE BLOCO LOGO ABAIXO DAS CONSTANTES ---
-if (!fs.existsSync(DATA_DIR)) {
-  fs.mkdirSync(DATA_DIR, { recursive: true });
+if (!fs.existsSync(CONFIG_FILE)) {
+  const defaultConfig = {
+    nomeRestaurante: "Restaurante do Irmão",
+    whatsapp: "5581999999999",
+    chavePix: "81999999999",
+    horarioFuncionamento: {
+      abertura: "10:00",
+      fechamento: "13:00"
+    }
+  };
+  fs.writeFileSync(CONFIG_FILE, JSON.stringify(defaultConfig, null, 2));
 }
-if (!fs.existsSync(STATE_FILE)) {
-  fs.writeFileSync(STATE_FILE, JSON.stringify({}, null, 2));
-}
-// ------------------------------------------------------
 
 const ADMIN_COOKIE = 'admin_session';
 
@@ -642,6 +647,24 @@ app.use(
 
 
 app.use(cookieParser());
+
+/* =========================================================
+   API DE CONFIGURAÇÕES DO RESTAURANTE
+   ========================================================= */
+
+app.get('/api/config', (req, res) => {
+  try {
+    if (fs.existsSync(CONFIG_FILE)) {
+      const configData = fs.readFileSync(CONFIG_FILE, 'utf8');
+      res.json(JSON.parse(configData));
+    } else {
+      res.status(404).json({ error: 'Arquivo config.json não encontrado.' });
+    }
+  } catch (error) {
+    console.error('Erro ao carregar configurações:', error);
+    res.status(500).json({ error: 'Erro ao carregar configurações do restaurante.' });
+  }
+});
 
 
 /* =========================================================

@@ -2675,9 +2675,37 @@
 
       };
 
+    closeOverlay(
+      'adminOverlay'
+    );
+
+
+
+    /* CONFIGURAÇÃO DINÂMICA DO RESTAURANTE */
+    let restauranteConfig = {};
+
+    async function carregarConfiguracoes() {
+      try {
+        const resposta = await fetch('/api/config');
+        if (resposta.ok) {
+          restauranteConfig = await resposta.json();
+          console.log('Configurações carregadas com sucesso:', restauranteConfig);
+
+          // Se tiver um elemento com a ID 'nome-restaurante' no seu HTML
+          const elementoNome = document.getElementById('nome-restaurante');
+          if (elementoNome && restauranteConfig.nomeRestaurante) {
+            elementoNome.textContent = restauranteConfig.nomeRestaurante;
+          }
+        }
+      } catch (erro) {
+        console.error('Erro ao buscar /api/config:', erro);
+      }
+    }
+
 
     /* INICIAR */
 
+    carregarConfiguracoes();
     loadMenu();
 
   </script>
