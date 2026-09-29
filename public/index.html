@@ -667,7 +667,7 @@
       </div>
 
 
-      <a class="wa-float" href="https://wa.me/5581920036280" target="_blank" rel="noopener">
+      <a id="wa-float-link" class="wa-float" href="https://wa.me/5581920036280" target="_blank" rel="noopener">
         WhatsApp
       </a>
 
@@ -2202,24 +2202,26 @@
       };
 
 
+
+
     /* WHATSAPP */
-
     function sendWA(number) {
+      const text = encodeURIComponent(calculatedOrder.mensagem);
 
-      const text =
-        encodeURIComponent(
-          calculatedOrder
-            .mensagem
-        );
+      // 1. Obtém o número dinâmico do config.json
+      const waNumber = restauranteConfig?.whatsapp || number || "5581920036280";
 
+      // 2. Declara a variável cleanNumber que estava a faltar
+      const cleanNumber = String(waNumber).replace(/\D/g, '');
 
+      // 3. Abre o link no WhatsApp
       window.open(
-        `https://wa.me/${5581920036280}?text=${text}`,
+        `https://wa.me/${cleanNumber}?text=${text}`,
         '_blank',
         'noopener'
       );
-
     }
+
 
 
     /* RESTAURANTE */
@@ -2679,7 +2681,22 @@
       'adminOverlay'
     );
 
+    /* WHATSAPP */
+    function sendWA(number) {
+      const text = encodeURIComponent(calculatedOrder.mensagem);
 
+      // Pega o número dinâmico do config.json
+      const waNumber = restauranteConfig?.whatsapp || number || "5581920036280";
+
+      // Limpa para deixar apenas números
+      const cleanNumber = String(waNumber).replace(/\D/g, '');
+
+      window.open(
+        `https://wa.me/${cleanNumber}?text=${text}`,
+        '_blank',
+        'noopener'
+      );
+    }
 
     /* CONFIGURAÇÃO DINÂMICA DO RESTAURANTE */
     let restauranteConfig = {};
@@ -2696,12 +2713,18 @@
           if (elementoNome && restauranteConfig.nomeRestaurante) {
             elementoNome.textContent = restauranteConfig.nomeRestaurante;
           }
+
+          // Atualiza o botão flutuante do WhatsApp
+          const linkWa = document.getElementById('wa-float-link');
+          if (linkWa && restauranteConfig.whatsapp) {
+            const numeroLimpo = String(restauranteConfig.whatsapp).replace(/\D/g, '');
+            linkWa.href = `https://wa.me/${numeroLimpo}`;
+          }
         }
       } catch (erro) {
         console.error('Erro ao buscar /api/config:', erro);
       }
     }
-
 
     /* INICIAR */
 
