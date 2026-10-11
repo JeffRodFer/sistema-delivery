@@ -57,7 +57,7 @@ const ADMIN_COOKIE = 'admin_session';
 
 const JWT_SECRET = process.env.JWT_SECRET || 'chave_secreta_padrao_123';
 const ADMIN_USER = process.env.ADMIN_USER || 'admin';
-const ADMIN_PASSWORD_HASH = process.env.ADMIN_PASSWORD_HASH ||'senha_padrao_123';
+const ADMIN_PASSWORD_HASH = process.env.ADMIN_PASSWORD_HASH || 'senha_padrao_123';
 
 if (!JWT_SECRET || !ADMIN_PASSWORD_HASH) {
   console.error(
@@ -623,7 +623,8 @@ app.use(
         ],
 
         connectSrc: [
-          "'self'"
+          "'self'",
+          'https://sistema-delivery-2in1.onrender.com'
         ],
 
         frameAncestors: [
