@@ -1,9 +1,9 @@
-# Restaurante do Irmão — versão segura do pedido
+# Sistema Delivery
 
 ## Estrutura
 
 ```text
-restaurante-do-irmao/
+Sistema-delivery/
 ├── data/
 │   └── menu-state.json
 ├── public/
