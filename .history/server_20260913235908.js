@@ -115,14 +115,14 @@ const MENU_BASE = [
     ['Sprite Zero', 6]
   ].map(([nome, preco], i) => ({
     id: `bebida-gaseificada-${i + 1}`,
-    categoria: 'Gaseificadas',
+    categoria: 'bebida',
     nome,
     preco
   })),
 
   {
     id: 'bebida-suco-1',
-    categoria: 'Sucos Naturais 350ml',
+    categoria: 'bebida',
     nome: 'Laranja natural',
     preco: 6
   },
@@ -137,7 +137,7 @@ const MENU_BASE = [
     ['Abacaxi com hortelã', 6]
   ].map(([nome, preco], i) => ({
     id: `bebida-polpa-${i + 1}`,
-    categoria: 'Polpas 500ml',
+    categoria: 'bebida',
     nome,
     preco
   })),
@@ -798,14 +798,14 @@ app.post(
 
         const bebidasInput =
           input.bebidas &&
-          typeof input.bebidas === 'object'
+            typeof input.bebidas === 'object'
             ? input.bebidas
             : {};
 
 
         const sobremesasInput =
           input.sobremesas &&
-          typeof input.sobremesas === 'object'
+            typeof input.sobremesas === 'object'
             ? input.sobremesas
             : {};
 
@@ -1025,9 +1025,7 @@ app.post(
             parseExtras(
               bebidasInput,
               [
-                'Gaseificadas',
-                'Sucos Naturais 350ml',
-                'Polpas 500ml'
+                'bebida'
               ],
               'Bebida'
             );
@@ -1115,9 +1113,9 @@ app.post(
           .toISOString()
           .replace(/\D/g, '')
           .slice(0, 14)}-${crypto
-          .randomBytes(3)
-          .toString('hex')
-          .toUpperCase()}`;
+            .randomBytes(3)
+            .toString('hex')
+            .toUpperCase()}`;
 
 
       const assinatura =
@@ -1225,7 +1223,7 @@ app.post(
 
     const userOk =
       receivedUser.length ===
-        expectedUser.length &&
+      expectedUser.length &&
       crypto.timingSafeEqual(
         receivedUser,
         expectedUser
@@ -1368,7 +1366,7 @@ app.put(
     if (
       !Array.isArray(changes) ||
       changes.length >
-        MENU_BASE.length
+      MENU_BASE.length
     ) {
 
       return res.status(400).json({
@@ -1405,7 +1403,7 @@ app.put(
           change.id
         ) ||
         typeof change.disponivel !==
-          'boolean' ||
+        'boolean' ||
         seen.has(change.id)
       ) {
 
