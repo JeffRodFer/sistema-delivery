@@ -1091,17 +1091,14 @@
     /* CARREGAR CARDÁPIO */
 
     async function loadMenu() {
-
       try {
-
         const response =
           await fetch(
-            '/api/menu',
+            'https://sistema-delivery-2in1.onrender.com/api/menu',
             {
               cache: 'no-store'
             }
           );
-
 
         if (!response.ok) {
           throw new Error();
@@ -2112,20 +2109,17 @@
 
       const response =
         await fetch(
-          '/api/orders',
+          'https://sistema-delivery-2in1.onrender.com/api/orders',
           {
             method: 'POST',
-
             headers: {
               'Content-Type':
                 'application/json'
             },
-
             body:
               JSON.stringify(
                 payload
               )
-
           }
         );
 
@@ -2243,7 +2237,7 @@
       }
 
       try {
-        const response = await fetch('/api/create-whatsapp-link', {
+        const response = await fetch('https://sistema-delivery-2in1.onrender.com/api/create-whatsapp-link', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ orderSummary: summaryText })
@@ -2352,33 +2346,19 @@
         );
 
 
-        const response =
-          await fetch(
-            '/api/admin/login',
-            {
-
-              method: 'POST',
-
-              headers: {
-                'Content-Type':
-                  'application/json'
-              },
-
-              body:
-                JSON.stringify({
-
-                  username:
-                    $('adminUser')
-                      .value,
-
-                  password:
-                    $('adminPassword')
-                      .value
-
-                })
-
-            }
-          );
+        const response = await fetch(
+          'https://sistema-delivery-2in1.onrender.com/api/admin/login',
+          {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+              username: $('adminUser').value,
+              password: $('adminPassword').value
+            })
+          }
+        )
 
 
         const data =
@@ -2557,34 +2537,31 @@
     $('adminSave').onclick =
       async () => {
 
-        const response =
-          await fetch(
-            '/api/admin/menu',
-            {
+        const response = await fetch('https://sistema-delivery-2in1.onrender.com/api/admin/menu', {
 
-              method: 'PUT',
+          method: 'PUT',
 
-              headers: {
-                'Content-Type':
-                  'application/json'
-              },
+          headers: {
+            'Content-Type':
+              'application/json'
+          },
 
-              body:
-                JSON.stringify({
+          body:
+            JSON.stringify({
 
-                  changes:
-                    adminDraft.map(
-                      x => ({
-                        id: x.id,
-                        disponivel:
-                          x.disponivel
-                      })
-                    )
+              changes:
+                adminDraft.map(
+                  x => ({
+                    id: x.id,
+                    disponivel:
+                      x.disponivel
+                  })
+                )
 
-                })
+            })
 
-            }
-          );
+        }
+        );
 
 
         const data =
