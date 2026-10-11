@@ -57,7 +57,7 @@ const ADMIN_COOKIE = 'admin_session';
 
 const JWT_SECRET = process.env.JWT_SECRET || 'chave_secreta_padrao_123';
 const ADMIN_USER = process.env.ADMIN_USER || 'admin';
-const ADMIN_PASSWORD_HASH = process.env.ADMIN_PASSWORD_HASH || 'senha_padrao_123';
+const ADMIN_PASSWORD_HASH = process.env.ADMIN_PASSWORD_HASH ||'senha_padrao_123';
 
 if (!JWT_SECRET || !ADMIN_PASSWORD_HASH) {
   console.error(
@@ -550,7 +550,8 @@ function sameOrigin(req, res, next) {
   const allowedOrigins = [
     'http://localhost:3000',
     'https://sistema-delivery-2wl.onrender.com',
-    'https://sistema-delivery-2in1.onrender.com'
+    'https://sistema-delivery-2in1.onrender.com',
+    'https://sistema-delivery-two.vercel.app/'
   ];
 
   const isAllowed = allowedOrigins.some(allowed => cleanOrigin.startsWith(allowed));
