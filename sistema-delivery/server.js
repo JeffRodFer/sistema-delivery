@@ -10,6 +10,7 @@ const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const cookieParser = require('cookie-parser');
 const helmet = require('helmet');
+const cors = require('cors');
 const rateLimit = require('express-rate-limit');
 const { Pool } = require('pg');
 
@@ -28,6 +29,17 @@ if (dbUrl) {
   console.log("DATABASE_URL não encontrada. Servidor rodando sem banco local.");
 }
 const app = express();
+
+// COLOQUE ESTE BLOCO LOGO ABAIXO DO APP = EXPRESS()
+app.use(cors({
+  origin: [
+    'http://localhost:3000',
+    'https://sistema-delivery-2wl.onrender.com',
+    'https://sistema-delivery-2in1.onrender.com',
+    'https://sistema-delivery-two.vercel.app'
+  ],
+  credentials: true
+}));
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
@@ -622,21 +634,20 @@ app.use(
           'https:'
         ],
 
+        // ... (as suas diretivas de segurança continuam aqui em cima)
         connectSrc: [
           "'self'",
           'https://sistema-delivery-2in1.onrender.com'
         ],
-
         frameAncestors: [
           "'none'"
         ]
       }
     },
-
     referrerPolicy: {
-      policy:
-        'strict-origin-when-cross-origin'
-    }
+      policy: 'strict-origin-when-cross-origin'
+    },
+    crossOriginResourcePolicy: false // <--- ADICIONE A VÍRGULA ACIMA E ESTA LINHA AQUI
   })
 );
 
