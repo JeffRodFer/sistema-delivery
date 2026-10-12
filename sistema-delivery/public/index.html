@@ -15,7 +15,7 @@
   <link
     href="https://fonts.googleapis.com/css2?family=Poppins:wght@600;700;800&family=Roboto:wght@400;500;700&display=swap"
     rel="stylesheet">
-    
+
   <style>
     :root {
       --orange: #f57c00;
@@ -1143,107 +1143,57 @@
 
     /* RENDERIZAÇÃO DO CARDÁPIO */
 
-    function section(
-      title,
-      cats,
-      accent,
-      hidePrice
-    ) {
-
-      const all =
-        menu.filter(
-          x =>
-            cats.includes(
-              x.categoria
-            )
-        );
-
+    function section(title, cats, accent, hidePrice) {
+      // O .trim() garante que espaços fantasmas não quebram a lista
+      const all = menu.filter(x => {
+        if (!x || !x.categoria) return false;
+        return cats.includes(x.categoria.trim());
+      });
 
       return `
-
     <section class="section">
-
-      <h2>
-        ${title}
-      </h2>
-
+      <h2>${title}</h2>
       <div class="grid">
-
         ${all.map(x => `
-
-          <div
-            class="
-              card
-              ${accent}
-              ${x.disponivel ? '' : 'unavailable'}
-            "
-          >
-
-            <strong>
-              ${esc(x.nome)}
-            </strong>
-
-            ${!hidePrice
-          ? `<span>${money(x.preco)}</span>`
-          : ''
-        }
-
-            ${x.disponivel
-          ? ''
-          : '<span class="badge">Indisponível hoje</span>'
-        }
-
+          <div class="card ${accent}${x.disponivel ? '' : 'unavailable'}">
+            <strong>${esc(x.nome)}</strong>${!hidePrice ? `<span>${money(x.preco)}</span>` : ''}
+            ${x.disponivel ? '' : '<span class="badge">Indisponível hoje</span>'}
           </div>
-
         `).join('')}
-
       </div>
-
     </section>
-
   `;
-
     }
 
-
     function renderMenu() {
-
       $('menu').innerHTML =
-
         section(
           'Guarnições',
-          ['Guarnições'],
+          ['Guarnições', 'Guarnição'], // Nomes alternativos por segurança
           'accent-guarnicoes',
-          true
+          true // true = esconde o preço
         )
-
         +
-
         section(
           'Proteínas',
-          ['Proteínas'],
+          ['Proteínas', 'Proteína'],
           'accent-proteinas',
-          true
+          true // true = esconde o preço
         )
-
         +
-
         section(
           'Bebidas e Sucos',
-          ['Bebidas e Sucos'],
+          ['Bebidas e Sucos', 'Bebidas', 'Bebida'], // Cobre qualquer variação!
           'accent-bebidas',
-          true
+          false // FALSE = Mostra o preço das bebidas na tela!
         )
-
         +
-
         section(
           'Sobremesas',
-          ['Sobremesas'],
+          ['Sobremesas', 'Sobremesa'],
           'accent-sobremesas',
-          true
+          false // FALSE = Mostra o preço das sobremesas na tela!
         );
-
     }
 
 
