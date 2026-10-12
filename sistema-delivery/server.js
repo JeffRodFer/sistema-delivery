@@ -54,9 +54,9 @@ const CONFIG_FILE = path.join(DATA_DIR, 'config.json');
 
 if (!fs.existsSync(CONFIG_FILE)) {
   const defaultConfig = {
-    nomeRestaurante: "Restaurante do Irmão",
-    whatsapp: "5581999999999",
-    chavePix: "81999999999",
+    nomeRestaurante: "Sistema Delivery",
+    whatsapp: "5581920036280",
+    chavePix: "305.711.738-45",
     horarioFuncionamento: {
       abertura: "10:00",
       fechamento: "13:00"
