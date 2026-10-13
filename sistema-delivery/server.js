@@ -1355,8 +1355,8 @@ app.post(
     // Salvando o token JWT no Cookie
     res.cookie(ADMIN_COOKIE, token, {
       httpOnly: true,
-      sameSite: 'lax',
-      secure: process.env.NODE_ENV === 'production',
+      sameSite: 'none',
+      secure: true,
       maxAge: 8 * 60 * 60 * 1000
     });
 
