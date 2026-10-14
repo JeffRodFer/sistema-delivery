@@ -1143,76 +1143,58 @@
 
     /* RENDERIZAÇÃO DO CARDÁPIO */
 
-function section(title, cats, accent, hidePrice) {
-  
-  const all = menu.filter(x => {
-    if (!x || !x.categoria) return false;
-    
-    // Transforma a categoria do banco em minúscula 
-    // e tira espaços fantasmas com o trim()
-    const catBanco = x.categoria.trim().toLowerCase();
-    
-    // Transforma as categorias aceites em minúsculas
-    const catAceites = cats.map(c => c.trim().toLowerCase());
-    
-    // Verifica se a categoria limpa existe na lista
-    return catAceites.includes(catBanco);
-  });
+    function section(title, cats, accent, hidePrice) {
+      // O .trim() garante que espaços fantasmas não quebram a lista
+      const all = menu.filter(x => {
+        if (!x || !x.categoria) return false;
+        return cats.includes(x.categoria.trim());
+      });
 
-  return `
+      return `
     <section class="section">
       <h2>${title}</h2>
       <div class="grid">
         ${all.map(x => `
-          <div 
-            class="card ${accent}${x.disponivel ? '' : 'unavailable'}"
-          >
-            <strong>${esc(x.nome)}</strong>${!hidePrice 
-              ? `<span>${money(x.preco)}</span>` 
-              : ''
-            }
-            
-            ${x.disponivel 
-              ? '' 
-              : '<span class="badge">Indisponível</span>'
-            }
+          <div class="card ${accent}${x.disponivel ? '' : 'unavailable'}">
+            <strong>${esc(x.nome)}</strong>${!hidePrice ? `<span>${money(x.preco)}</span>` : ''}
+            ${x.disponivel ? '' : '<span class="badge">Indisponível hoje</span>'}
           </div>
         `).join('')}
       </div>
     </section>
   `;
-}
+    }
 
-function renderMenu() {
-  $('menu').innerHTML =
-    section(
-      'Guarnições',
-      ['Guarnições', 'Guarnição'], 
-      'accent-guarnicoes',
-      true 
-    )
-    +
-    section(
-      'Proteínas',
-      ['Proteínas', 'Proteína'],
-      'accent-proteinas',
-      true 
-    )
-    +
-    section(
-      'Bebidas e Sucos',
-      ['Bebidas e Sucos', 'Bebidas', 'Bebida'], // Cobre as variações!
-      'accent-bebidas',
-      false // MOSTRA os preços!
-    )
-    +
-    section(
-      'Sobremesas',
-      ['Sobremesas', 'Sobremesa'],
-      'accent-sobremesas',
-      false // MOSTRA os preços!
-    );
-}
+    function renderMenu() {
+      $('menu').innerHTML =
+        section(
+          'Guarnições',
+          ['Guarnições', 'Guarnição'], // Nomes alternativos por segurança
+          'accent-guarnicoes',
+          true // true = esconde o preço
+        )
+        +
+        section(
+          'Proteínas',
+          ['Proteínas', 'Proteína'],
+          'accent-proteinas',
+          true // true = esconde o preço
+        )
+        +
+        section(
+          'Bebidas e Sucos',
+          ['Bebidas e Sucos', 'Bebidas', 'Bebida'], // Cobre qualquer variação!
+          'accent-bebidas',
+          false // FALSE = Mostra o preço das bebidas na tela!
+        )
+        +
+        section(
+          'Sobremesas',
+          ['Sobremesas', 'Sobremesa'],
+          'accent-sobremesas',
+          false // FALSE = Mostra o preço das sobremesas na tela!
+        );
+    }
 
 
     /* MODAIS */
@@ -2323,7 +2305,7 @@ function renderMenu() {
             },
 
             credentials: 'include',
-            
+
             body: JSON.stringify({
               username: $('adminUser').value,
               password: $('adminPassword').value
@@ -2379,40 +2361,39 @@ function renderMenu() {
     function renderAdmin() {
 
       const groups = [
-
         [
           'Guarnições',
-          ['Guarnições']
+          ['Guarnições', 'Guarnição']
         ],
-
         [
           'Proteínas',
-          ['Proteínas']
+          ['Proteínas', 'Proteína']
         ],
-
         [
           'Bebidas',
           [
+            'Bebidas',
+            'Bebida',
+            'Bebidas e Sucos',
             'Gaseificadas',
             'Sucos Naturais 350ml',
             'Polpas 500ml'
           ]
         ],
-
         [
           'Sobremesas',
-          ['Sobremesas']
+          ['Sobremesas', 'Sobremesa']
         ]
-
       ];
 
-
-      $('adminItems')
-        .innerHTML =
-
+      $('adminItems').innerHTML =
         groups.map(
-          ([title, cats]) => `
+          ([title, cats]) => {
 
+            // Transforma as categorias aceites em minúsculas para o filtro não falhar
+            const catAceites = cats.map(c => c.trim().toLowerCase());
+
+            return `
           <div class="admin-section">
 
             <h3>
@@ -2420,31 +2401,28 @@ function renderMenu() {
             </h3>
 
             ${adminDraft
-              .filter(
-                x =>
-                  cats.includes(
-                    x.categoria
-                  )
-              )
-              .map(
-                x => `
+                .filter(x => {
+                  if (!x || !x.categoria) return false;
 
+                  // Transforma a categoria que vem do banco em minúscula para comparar
+                  const catBanco = x.categoria.trim().toLowerCase();
+
+                  return catAceites.includes(catBanco);
+                })
+                .map(
+                  x => `
                     <div class="admin-item">
 
                       <span>
                         ${esc(x.nome)}
                       </span>
 
-
                       <label class="switch">
 
                         <input
                           type="checkbox"
                           data-admin-id="${x.id}"
-                          ${x.disponivel
-                    ? 'checked'
-                    : ''
-                  }
+                          ${x.disponivel ? 'checked' : ''}
                         >
 
                         <span class="slider"></span>
@@ -2452,15 +2430,14 @@ function renderMenu() {
                       </label>
 
                     </div>
-
                   `
-              )
-              .join('')
-            }
+                )
+                .join('')
+              }
 
           </div>
-
         `
+          }
         )
           .join('');
 
