@@ -1442,11 +1442,9 @@ app.put(
   requireAdmin,
   sameOrigin,
   async (req, res) => {
-
     try {
       const changes = req.body?.changes;
 
-      // 1. Tiramos o limite do MENU_BASE. Agora ele aceita os itens reais do Banco de Dados.
       if (!Array.isArray(changes) || changes.length === 0) {
         return res.status(400).json({
           erro: 'Dados de disponibilidade inválidos.'
@@ -1456,7 +1454,6 @@ app.put(
       const seen = new Set();
 
       for (const change of changes) {
-        // 2. Validação focada apenas na segurança dos dados (se tem ID e se é Verdadeiro/Falso)
         if (
           !change ||
           !change.id ||
@@ -1470,33 +1467,31 @@ app.put(
         seen.add(change.id);
       }
 
-      // 3. Atualiza diretamente no banco Neon!
-      await pool.query(
-        `
+      for (const change of changes) {
+        await pool.query(
+          `
             UPDATE menu_items
-            SET
-              disponivel = $1
+            SET disponivel = $1
             WHERE id = $2
           `,
-        [change.disponivel, change.id]
-      );
-    }
+          [change.disponivel, change.id]
+        );
+      }
 
       // Puxa o menu atualizado para mandar de volta à tela
       const itens = await publicMenu();
 
-    res.json({
-      ok: true,
-      itens
-    });
+      return res.json({
+        ok: true,
+        itens
+      });
 
-  } catch (error) {
-    console.error('Erro ao atualizar disponibilidade do menu:', error);
-    res.status(500).json({
-      erro: 'Não foi possível salvar as alterações no banco de dados.'
-    });
-  }
-
+    } catch (error) {
+      console.error('Erro ao atualizar disponibilidade do menu:', error);
+      return res.status(500).json({
+        erro: 'Não foi possível salvar as alterações no banco de dados.'
+      });
+    }
   }
 );
 
