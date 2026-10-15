@@ -22,12 +22,24 @@ let pool = null;
 if (dbUrl) {
   pool = new Pool({
     connectionString: dbUrl,
-    ssl: { rejectUnauthorized: false }
+    ssl: { rejectUnauthorized: false },
+    // 🛡️ BLINDAGEM 1: Fecha conexões paradas após 30 segundos
+    idleTimeoutMillis: 30000,
+    // 🛡️ BLINDAGEM 2: Se demorar mais de 5s para conectar, desiste ao invés de travar
+    connectionTimeoutMillis: 5000
   });
+
+  // 🛡️ BLINDAGEM 3: O "Antipânico"
+  // Se o banco fechar a conexão por inatividade, o servidor anota o erro, mas NÃO DESLIGA.
+  pool.on('error', (err, client) => {
+    console.error('Conexão inativa encerrada pelo banco (ignorado pela blindagem):', err.message);
+  });
+
   console.log("Conexão com o banco configurada com sucesso.");
 } else {
   console.log("DATABASE_URL não encontrada. Servidor rodando sem banco local.");
 }
+
 const app = express();
 
 // COLOQUE ESTE BLOCO LOGO ABAIXO DO APP = EXPRESS()
@@ -84,7 +96,7 @@ const DELIVERY_PRICE = 5;
 
 
 /* ============================================================ */
-/* NUMERO DE TELEFONE DO RESTAURANTE:                               */
+/* NUMERO DE TELEFONE DO RESTAURANTE                            */
 /* ============================================================ */
 
 app.post('/api/create-whatsapp-link', (req, res) => {
