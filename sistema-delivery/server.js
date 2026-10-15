@@ -26,7 +26,7 @@ if (dbUrl) {
     // 🛡️ BLINDAGEM 1: Fecha conexões paradas após 30 segundos
     idleTimeoutMillis: 30000,
     // 🛡️ BLINDAGEM 2: Se demorar mais de 5s para conectar, desiste ao invés de travar
-    connectionTimeoutMillis: 5000
+    connectionTimeoutMillis: 30000
   });
 
   // 🛡️ BLINDAGEM 3: O "Antipânico"
