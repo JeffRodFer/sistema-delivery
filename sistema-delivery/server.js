@@ -1437,10 +1437,6 @@ app.post(
    ADMIN - ALTERAR DISPONIBILIDADE
    ========================================================= */
 
-/* =========================================================
-   ADMIN - ALTERAR DISPONIBILIDADE
-   ========================================================= */
-
 app.put(
   '/api/admin/menu',
   requireAdmin,
@@ -1475,33 +1471,31 @@ app.put(
       }
 
       // 3. Atualiza diretamente no banco Neon!
-      for (const change of changes) {
-        await pool.query(
-          `
+      await pool.query(
+        `
             UPDATE menu_items
             SET
-              disponivel = $1,
-              atualizado_em = NOW()
+              disponivel = $1
             WHERE id = $2
           `,
-          [change.disponivel, change.id]
-        );
-      }
+        [change.disponivel, change.id]
+      );
+    }
 
       // Puxa o menu atualizado para mandar de volta à tela
       const itens = await publicMenu();
 
-      res.json({
-        ok: true,
-        itens
-      });
+    res.json({
+      ok: true,
+      itens
+    });
 
-    } catch (error) {
-      console.error('Erro ao atualizar disponibilidade do menu:', error);
-      res.status(500).json({
-        erro: 'Não foi possível salvar as alterações no banco de dados.'
-      });
-    }
+  } catch (error) {
+    console.error('Erro ao atualizar disponibilidade do menu:', error);
+    res.status(500).json({
+      erro: 'Não foi possível salvar as alterações no banco de dados.'
+    });
+  }
 
   }
 );
