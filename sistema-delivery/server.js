@@ -1437,6 +1437,10 @@ app.post(
    ADMIN - ALTERAR DISPONIBILIDADE
    ========================================================= */
 
+/* =========================================================
+   ADMIN - ALTERAR DISPONIBILIDADE
+   ========================================================= */
+
 app.put(
   '/api/admin/menu',
   requireAdmin,
@@ -1444,64 +1448,34 @@ app.put(
   async (req, res) => {
 
     try {
+      const changes = req.body?.changes;
 
-      const changes =
-        req.body?.changes;
-
-      if (
-        !Array.isArray(changes) ||
-        changes.length >
-        MENU_BASE.length
-      ) {
-
+      // 1. Tiramos o limite do MENU_BASE. Agora ele aceita os itens reais do Banco de Dados.
+      if (!Array.isArray(changes) || changes.length === 0) {
         return res.status(400).json({
-          erro:
-            'Dados de disponibilidade inválidos.'
+          erro: 'Dados de disponibilidade inválidos.'
         });
-
       }
 
-      const validIds =
-        new Set(
-          MENU_BASE.map(
-            item => item.id
-          )
-        );
+      const seen = new Set();
 
-      const seen =
-        new Set();
-
-      for (
-        const change of changes
-      ) {
-
+      for (const change of changes) {
+        // 2. Validação focada apenas na segurança dos dados (se tem ID e se é Verdadeiro/Falso)
         if (
           !change ||
-          !validIds.has(
-            change.id
-          ) ||
-          typeof change.disponivel !==
-          'boolean' ||
+          !change.id ||
+          typeof change.disponivel !== 'boolean' ||
           seen.has(change.id)
         ) {
-
           return res.status(400).json({
-            erro:
-              'Alteração de menu inválida.'
+            erro: `Alteração inválida no item: ${change.id || 'desconhecido'}`
           });
-
         }
-
-        seen.add(
-          change.id
-        );
-
+        seen.add(change.id);
       }
 
-      for (
-        const change of changes
-      ) {
-
+      // 3. Atualiza diretamente no banco Neon!
+      for (const change of changes) {
         await pool.query(
           `
             UPDATE menu_items
@@ -1510,16 +1484,12 @@ app.put(
               atualizado_em = NOW()
             WHERE id = $2
           `,
-          [
-            change.disponivel,
-            change.id
-          ]
+          [change.disponivel, change.id]
         );
-
       }
 
-      const itens =
-        await publicMenu();
+      // Puxa o menu atualizado para mandar de volta à tela
+      const itens = await publicMenu();
 
       res.json({
         ok: true,
@@ -1527,17 +1497,10 @@ app.put(
       });
 
     } catch (error) {
-
-      console.error(
-        'Erro ao atualizar disponibilidade do menu:',
-        error
-      );
-
+      console.error('Erro ao atualizar disponibilidade do menu:', error);
       res.status(500).json({
-        erro:
-          'Não foi possível salvar o menu.'
+        erro: 'Não foi possível salvar as alterações no banco de dados.'
       });
-
     }
 
   }
