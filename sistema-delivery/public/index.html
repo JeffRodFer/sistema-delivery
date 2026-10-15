@@ -1457,21 +1457,18 @@
 
       ${qtySection(
         'Bebidas',
-        [
-          'Bebidas e Sucos'
-        ],
+        ['Bebidas', 'Bebida', 'Bebidas e Sucos', 'Gaseificadas', 'Sucos Naturais 350ml', 'Polpas 500ml'], // O dicionário precisa estar aqui também!
         i,
         'bebidas'
-      )
-        }
+      )}
 
 
       ${qtySection(
-          'Sobremesas',
-          ['Sobremesas'],
-          i,
-          'sobremesas'
-        )
+        'Sobremesas',
+        ['Sobremesas'],
+        i,
+        'sobremesas'
+      )
         }
 
 
@@ -2166,14 +2163,14 @@
 
       const PRATOS_COMPLETOS = ['Arrumadinho', 'Feijoada', 'Yakisoba'];
       let summaryText = $('orderSummary').innerText;
-      
+
       const temPratoCompleto = PRATOS_COMPLETOS.some(prato =>
         summaryText.toLowerCase().includes(prato.toLowerCase())
       );
 
       if (!temPratoCompleto && calculatedOrder.guarnicoesCount === 0) {
         alert('Por favor, selecione as guarnições antes de enviar o pedido.');
-        return; 
+        return;
       }
 
       // ==========================================
@@ -2227,8 +2224,8 @@
     function resetOrder() {
       orderState = null;
       calculatedOrder = null;
-      $('customerName').value = '';$('customerPhone').value = '';
-      $('customerAddress').value = '';$('mealCount').value = 1;
+      $('customerName').value = ''; $('customerPhone').value = '';
+      $('customerAddress').value = ''; $('mealCount').value = 1;
     }
 
     /* =====================================================
@@ -2238,7 +2235,7 @@
     $('openAdmin').onclick = () => {
       clearErr('adminError');
       $('adminLogin').classList.remove('hidden');
-      $('adminPanel').classList.add('hidden');$('adminPassword').value = '';
+      $('adminPanel').classList.add('hidden'); $('adminPassword').value = '';
       openOverlay('adminOverlay');
     };
 
@@ -2274,7 +2271,7 @@
 
       adminDraft = menu.map(x => ({ ...x }));
       renderAdmin();
-      $('adminLogin').classList.add('hidden');$('adminPanel').classList.remove('hidden');
+      $('adminLogin').classList.add('hidden'); $('adminPanel').classList.remove('hidden');
     };
 
     /* ADMIN RENDER */
@@ -2292,12 +2289,12 @@
           <div class="admin-section">
             <h3>${title}</h3>
             ${adminDraft
-              .filter(x => {
-                if (!x || !x.categoria) return false;
-                const catBanco = x.categoria.trim().toLowerCase();
-                return catAceites.includes(catBanco);
-              })
-              .map(x => `
+            .filter(x => {
+              if (!x || !x.categoria) return false;
+              const catBanco = x.categoria.trim().toLowerCase();
+              return catAceites.includes(catBanco);
+            })
+            .map(x => `
                 <div class="admin-item">
                   <span>${esc(x.nome)}</span>
                   <label class="switch">
@@ -2338,7 +2335,7 @@
       if (!response.ok) {
         if (response.status === 401) {
           showErr('adminError', 'Sua sessão expirou. Faça login novamente.');
-          $('adminLogin').classList.remove('hidden');$('adminPanel').classList.add('hidden');
+          $('adminLogin').classList.remove('hidden'); $('adminPanel').classList.add('hidden');
         } else {
           showErr('adminError', data.erro || 'Não foi possível salvar.');
         }

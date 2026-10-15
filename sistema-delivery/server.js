@@ -1000,37 +1000,43 @@ app.post(
         }
 
 
-        function getFood(
-          id,
-          category
-        ) {
+        function getFood(id, category) {
+          const item = map.get(String(id));
 
-          const item =
-            map.get(String(id));
-
-
-          if (
-            !item ||
-            item.categoria !== category
-          ) {
-
-            throw new Error(
-              `Marmita ${i + 1}: item inválido.`
-            );
-
+          if (!item) {
+            throw new Error(`Marmita ${i + 1}: item não encontrado.`);
           }
 
+          // 1. Converte as categorias para minúsculas para não haver erro com letras maiúsculas
+          const catBanco = item.categoria.trim().toLowerCase();
+          const catPedida = category.trim().toLowerCase();
 
-          if (
-            item.disponivel !== true
-          ) {
+          // 2. Dicionário de variações permitidas para cada categoria
+          const regrasCategorias = {
+            'guarnições': ['guarnições', 'guarnição'],
+            'proteínas': ['proteínas', 'proteína'],
+            // Aceita qualquer tipo de bebida configurada no seu banco:
+            'bebidas e sucos': ['bebidas e sucos', 'bebidas', 'bebida', 'gaseificadas', 'sucos naturais 350ml', 'polpas 500ml'],
+            'bebidas': ['bebidas e sucos', 'bebidas', 'bebida', 'gaseificadas', 'sucos naturais 350ml', 'polpas 500ml'],
+            'sobremesas': ['sobremesas', 'sobremesa']
+          };
 
-            throw new Error(
-              `Marmita ${i + 1}: ${item.nome} está indisponível.`
-            );
+          // 3. Pega as regras da categoria solicitada
+          const categoriasPermitidas = regrasCategorias[catPedida] || [catPedida];
 
+          // 4. Se a categoria do item não for nenhuma das permitidas, barra o pedido
+          if (!categoriasPermitidas.includes(catBanco)) {
+            if (catPedida.includes('bebida')) {
+              throw new Error(`Bebida: item inválido.`);
+            } else {
+              throw new Error(`Marmita ${i + 1}: item inválido (${item.nome} não pertence a ${category}).`);
+            }
           }
 
+          // 5. Verifica se o item não foi desligado hoje
+          if (item.disponivel !== true) {
+            throw new Error(`Marmita ${i + 1}: ${item.nome} está indisponível no momento.`);
+          }
 
           return item;
         }
