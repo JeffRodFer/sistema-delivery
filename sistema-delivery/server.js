@@ -1565,7 +1565,7 @@ app.listen(PORT, () => {
   const RENDER_URL = process.env.RENDER_EXTERNAL_URL;
 
   if (RENDER_URL) {
-    const PING_INTERVAL = 14 * 60 * 1000; // 14 minutos
+    const PING_INTERVAL = 4 * 60 * 1000; // 14 minutos
 
     setInterval(async () => {
       try {
