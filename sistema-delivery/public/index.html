@@ -1455,20 +1455,38 @@
       </div>
 
 
-      ${qtySection(
+      <!-- GAVETA DE BEBIDAS -->
+      <details style="margin-top: 15px; margin-bottom: 15px; border: 1px solid #ccc; border-radius: 8px; padding: 10px;">
+        <summary style="font-size: 1.1em; font-weight: bold; cursor: pointer; list-style: none; outline: none;">
+          🥤 Bebidas (Clique para abrir as opções)
+        </summary>
+        
+        <div style="margin-top: 15px;">
+          ${qtySection(
         'Bebidas',
-        ['Bebidas', 'Bebida', 'Bebidas e Sucos', 'Gaseificadas', 'Sucos Naturais 350ml', 'Polpas 500ml'], // O dicionário precisa estar aqui também!
+        ['Bebidas', 'Bebida', 'Bebidas e Sucos', 'Gaseificadas', 'Sucos Naturais 350ml', 'Polpas 500ml'],
         i,
         'bebidas'
       )}
+        </div>
+      </details>
 
 
-      ${qtySection(
+      <!-- GAVETA DE SOBREMESAS -->
+      <details style="margin-bottom: 15px; border: 1px solid #ccc; border-radius: 8px; padding: 10px;">
+        <summary style="font-size: 1.1em; font-weight: bold; cursor: pointer; list-style: none; outline: none;">
+          🍮 Sobremesas (Clique para abrir as opções)
+        </summary>
+        
+        <div style="margin-top: 15px;">
+          ${qtySection(
         'Sobremesas',
         ['Sobremesas'],
         i,
         'sobremesas'
-      )
+      )}
+        </div>
+      </details>
         }
 
 
