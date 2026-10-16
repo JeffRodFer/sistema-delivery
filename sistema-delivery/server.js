@@ -1550,7 +1550,7 @@ app.use((req, res) => {
    INICIAR SERVIDOR & ANTI-HIBERNAÇÃO
    ========================================================= */
 app.listen(PORT, () => {
-  console.log(`Restaurante do Irmão rodando em http://localhost:${PORT}`);
+  console.log(`Sistema Delivery rodando em http://localhost:${PORT}`);
 
   // --- ESTRATÉGIA ANTI-HIBERNAÇÃO (SELF-PING DO RENDER) ---
   const RENDER_URL = process.env.RENDER_EXTERNAL_URL;
