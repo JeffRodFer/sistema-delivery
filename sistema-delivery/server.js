@@ -1468,14 +1468,24 @@ app.put(
       }
 
       for (const change of changes) {
-        await pool.query(
+        // 1. Limpa espaços invisíveis caso o ID seja um texto
+        const cleanId = typeof change.id === 'string' ? change.id.trim() : change.id;
+
+        const resultado = await pool.query(
           `
             UPDATE menu_items
             SET disponivel = $1
             WHERE id = $2
           `,
-          [change.disponivel, change.id]
+          [change.disponivel, cleanId]
         );
+
+        // 2. O Rastreador: Vai avisar nos Logs do Render exatamente o que aconteceu
+        if (resultado.rowCount === 0) {
+          console.log(`⚠️ ALERTA FANTASMA: O site tentou alterar o ID '${cleanId}', mas ele NÃO EXISTE no banco Neon!`);
+        } else {
+          console.log(`✅ SUCESSO: Item ID '${cleanId}' alterado para ${change.disponivel}`);
+        }
       }
 
       // Puxa o menu atualizado para mandar de volta à tela
