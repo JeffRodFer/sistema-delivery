@@ -42,6 +42,8 @@ if (dbUrl) {
 
 const app = express();
 
+app.set('trust proxy', 1);
+
 // COLOQUE ESTE BLOCO LOGO ABAIXO DO APP = EXPRESS()
 app.use(cors({
   origin: [
