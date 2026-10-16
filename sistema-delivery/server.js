@@ -304,13 +304,27 @@ async function publicMenuFromDatabase() {
     ORDER BY id
   `);
 
-  return result.rows.map(item => ({
-    id: item.id,
-    categoria: item.categoria,
-    nome: item.nome,
-    preco: Number(item.preco),
-    disponivel: item.disponivel
-  }));
+  return result.rows.map(item => {
+    // 🛡️ O TRADUTOR: Converte a "palavra" false num Falso matemático puro
+    let isAvailable = false;
+    if (
+      item.disponivel === true ||
+      item.disponivel === 'true' ||
+      item.disponivel === 't' ||
+      item.disponivel === 1 ||
+      item.disponivel === '1'
+    ) {
+      isAvailable = true;
+    }
+
+    return {
+      id: String(item.id),
+      categoria: item.categoria,
+      nome: item.nome,
+      preco: Number(item.preco),
+      disponivel: isAvailable
+    };
+  });
 }
 
 async function publicMenu() {
@@ -898,19 +912,32 @@ app.post(
   `);
 
 
-      const map =
-        new Map(
-          menuResult.rows.map(item => [
-            item.id,
+      const map = new Map(
+        menuResult.rows.map(item => {
+          // 🛡️ O TRADUTOR AQUI TAMBÉM: Impede que as pessoas comprem itens desligados
+          let isAvailable = false;
+          if (
+            item.disponivel === true ||
+            item.disponivel === 'true' ||
+            item.disponivel === 't' ||
+            item.disponivel === 1 ||
+            item.disponivel === '1'
+          ) {
+            isAvailable = true;
+          }
+
+          return [
+            String(item.id),
             {
-              id: item.id,
+              id: String(item.id),
               categoria: item.categoria,
               nome: item.nome,
               preco: Number(item.preco),
-              disponivel: item.disponivel
+              disponivel: isAvailable
             }
-          ])
-        );
+          ];
+        })
+      );
 
 
       const marmitas = [];
