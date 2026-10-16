@@ -1109,63 +1109,35 @@ app.post(
             of Object.entries(inputMap)
           ) {
 
-            const qty =
-              Number(rawQty);
+            const qty = Number(rawQty);
 
-
-            if (
-              !Number.isInteger(qty) ||
-              qty < 0 ||
-              qty > 20
-            ) {
-
-              throw new Error(
-                `${label}: quantidade inválida.`
-              );
-
+            if (!Number.isInteger(qty) || qty < 0 || qty > 20) {
+              throw new Error(`${label}: quantidade inválida.`);
             }
-
 
             if (qty === 0) {
               continue;
             }
 
+            // 1. Limpa espaços fantasmas do ID
+            const cleanId = String(id).trim();
+            const item = map.get(cleanId);
 
-            const item =
-              map.get(String(id));
-
-
-            if (
-              !item ||
-              !categories.includes(
-                item.categoria
-              )
-            ) {
-
-              throw new Error(
-                `${label}: item inválido.`
-              );
-
+            // 2. Apenas verifica se o item existe (sem burocracia de categorias exatas)
+            if (!item) {
+              throw new Error(`${label}: item inválido (não encontrado no cardápio).`);
             }
 
-
-            if (
-              item.disponivel !== true
-            ) {
-
-              throw new Error(
-                `${label}: ${item.nome} está indisponível.`
-              );
-
+            // 3. Verifica se está disponível hoje
+            if (item.disponivel !== true) {
+              throw new Error(`${label}: ${item.nome} está indisponível.`);
             }
 
             result.push({
               ...item,
               quantidade: qty
             });
-
           }
-
 
           return result;
         }
