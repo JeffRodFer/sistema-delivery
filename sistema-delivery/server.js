@@ -1042,32 +1042,41 @@ app.post(
 
 
         function getFood(id, category) {
-          const item = map.get(String(id));
+          // Limpeza do ID para garantir que não há espaços fantasmas
+          const cleanId = String(id).trim();
+          const item = map.get(cleanId);
 
           if (!item) {
             throw new Error(`Marmita ${i + 1}: item não encontrado.`);
           }
 
-          // 1. Converte as categorias para minúsculas para não haver erro com letras maiúsculas
+          // 1. Converte as categorias para minúsculas para não haver erro
           const catBanco = item.categoria.trim().toLowerCase();
           const catPedida = category.trim().toLowerCase();
 
-          // 2. Dicionário de variações permitidas para cada categoria
+          // 2. Dicionário BLINDADO (Com Singular e Plural)
           const regrasCategorias = {
             'guarnições': ['guarnições', 'guarnição'],
+            'guarnição': ['guarnições', 'guarnição'],
             'proteínas': ['proteínas', 'proteína'],
-            // Aceita qualquer tipo de bebida configurada no seu banco:
-            'bebidas e sucos': ['bebidas e sucos', 'bebidas', 'bebida', 'gaseificadas', 'sucos naturais 350ml', 'polpas 500ml'],
-            'bebidas': ['bebidas e sucos', 'bebidas', 'bebida', 'gaseificadas', 'sucos naturais 350ml', 'polpas 500ml'],
-            'sobremesas': ['sobremesas', 'sobremesa']
+            'proteína': ['proteínas', 'proteína'],
+            'bebidas e sucos': ['bebidas e sucos', 'bebidas', 'bebida', 'gaseificadas', 'sucos naturais 350ml', 'polpas 500ml', 'suco', 'refrigerante'],
+            'bebidas': ['bebidas e sucos', 'bebidas', 'bebida', 'gaseificadas', 'sucos naturais 350ml', 'polpas 500ml', 'suco', 'refrigerante'],
+            'bebida': ['bebidas e sucos', 'bebidas', 'bebida', 'gaseificadas', 'sucos naturais 350ml', 'polpas 500ml', 'suco', 'refrigerante'],
+            'sobremesas': ['sobremesas', 'sobremesa'],
+            'sobremesa': ['sobremesas', 'sobremesa']
           };
 
           // 3. Pega as regras da categoria solicitada
           const categoriasPermitidas = regrasCategorias[catPedida] || [catPedida];
 
-          // 4. Se a categoria do item não for nenhuma das permitidas, barra o pedido
-          if (!categoriasPermitidas.includes(catBanco)) {
-            if (catPedida.includes('bebida')) {
+          // 4. O "Motor Inteligente": Verifica se parte do nome bate (ex: acha "suco" dentro de "sucos naturais")
+          const categoriaValida = categoriasPermitidas.some(regra =>
+            catBanco.includes(regra) || regra.includes(catBanco)
+          );
+
+          if (!categoriaValida) {
+            if (catPedida.includes('bebid')) {
               throw new Error(`Bebida: item inválido.`);
             } else {
               throw new Error(`Marmita ${i + 1}: item inválido (${item.nome} não pertence a ${category}).`);
