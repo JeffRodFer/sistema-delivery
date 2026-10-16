@@ -1042,52 +1042,21 @@ app.post(
 
 
         function getFood(id, category) {
-          // Limpeza do ID para garantir que não há espaços fantasmas
+          // 1. Limpa espaços fantasmas do ID
           const cleanId = String(id).trim();
           const item = map.get(cleanId);
 
+          // 2. Se o item não existir, barra com mensagem clara
           if (!item) {
-            throw new Error(`Marmita ${i + 1}: item não encontrado.`);
+            throw new Error(`Item selecionado não foi encontrado no cardápio. Atualize a página.`);
           }
 
-          // 1. Converte as categorias para minúsculas para não haver erro
-          const catBanco = item.categoria.trim().toLowerCase();
-          const catPedida = category.trim().toLowerCase();
-
-          // 2. Dicionário BLINDADO (Com Singular e Plural)
-          const regrasCategorias = {
-            'guarnições': ['guarnições', 'guarnição'],
-            'guarnição': ['guarnições', 'guarnição'],
-            'proteínas': ['proteínas', 'proteína'],
-            'proteína': ['proteínas', 'proteína'],
-            'bebidas e sucos': ['bebidas e sucos', 'bebidas', 'bebida', 'gaseificadas', 'sucos naturais 350ml', 'polpas 500ml', 'suco', 'refrigerante'],
-            'bebidas': ['bebidas e sucos', 'bebidas', 'bebida', 'gaseificadas', 'sucos naturais 350ml', 'polpas 500ml', 'suco', 'refrigerante'],
-            'bebida': ['bebidas e sucos', 'bebidas', 'bebida', 'gaseificadas', 'sucos naturais 350ml', 'polpas 500ml', 'suco', 'refrigerante'],
-            'sobremesas': ['sobremesas', 'sobremesa'],
-            'sobremesa': ['sobremesas', 'sobremesa']
-          };
-
-          // 3. Pega as regras da categoria solicitada
-          const categoriasPermitidas = regrasCategorias[catPedida] || [catPedida];
-
-          // 4. O "Motor Inteligente": Verifica se parte do nome bate (ex: acha "suco" dentro de "sucos naturais")
-          const categoriaValida = categoriasPermitidas.some(regra =>
-            catBanco.includes(regra) || regra.includes(catBanco)
-          );
-
-          if (!categoriaValida) {
-            if (catPedida.includes('bebid')) {
-              throw new Error(`Bebida: item inválido.`);
-            } else {
-              throw new Error(`Marmita ${i + 1}: item inválido (${item.nome} não pertence a ${category}).`);
-            }
-          }
-
-          // 5. Verifica se o item não foi desligado hoje
+          // 3. Verifica se você não desligou o item no painel Admin hoje
           if (item.disponivel !== true) {
-            throw new Error(`Marmita ${i + 1}: ${item.nome} está indisponível no momento.`);
+            throw new Error(`Atenção: ${item.nome} está indisponível no momento.`);
           }
 
+          // 4. Retorna o item aprovado e com o preço verdadeiro do banco
           return item;
         }
 
