@@ -661,7 +661,7 @@ app.use(
         // ... (as suas diretivas de segurança continuam aqui em cima)
         connectSrc: [
           "'self'",
-          'https://sistema-delivery-2in1.onrender.com'
+          'https://sistema-delivery-backend.vercel.app'
         ],
         frameAncestors: [
           "'none'"
