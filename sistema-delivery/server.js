@@ -1,6 +1,6 @@
 'use strict';
 
-require('dotenv').config();
+//require('dotenv').config();
 
 const express = require('express');
 const path = require('path');
@@ -589,8 +589,6 @@ function sameOrigin(req, res, next) {
 
   const allowedOrigins = [
     'http://localhost:3000',
-    'https://sistema-delivery-2wl.onrender.com',
-    'https://sistema-delivery-2in1.onrender.com',
     'https://sistema-delivery-two.vercel.app'
   ];
 
