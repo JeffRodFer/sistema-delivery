@@ -2030,13 +2030,13 @@
       );
 
 
-      // 1. A nossa Lista VIP de pratos especiais (exclusivos)
+      // 1. Lista VIP (palavras-chave em letras minúsculas)
       const proteinasSolo = [
-        "Arrumadinho de charque",
-        "Arrumadinho de carne de sol",
-        "Cozido (Arroz, pirão, carne e legumes)",
-        "Feijoada",
-        "Yakisoba Especial"
+        "arrumadinho de charque",
+        "arrumadinho de carne de sol",
+        "cozido",
+        "feijoada",
+        "yakisoba"
       ];
 
       // 2. O fiscal analisa marmita por marmita
@@ -2044,35 +2044,34 @@
         const qtProteinas = m.proteinas.length;
         const qtGuarnicoes = m.guarnicoes.length;
 
-        // Verifica se o cliente escolheu algum prato especial nesta marmita
+        // Aplica o "raio-X" (JSON.stringify) para garantir que lê o nome da proteína
+        // independentemente da forma como ela vem do banco de dados.
         const temSolo = m.proteinas.some(p => {
-          const nome = p.nome ? p.nome : p;
-          return proteinasSolo.includes(nome);
+          const textoRaioX = (typeof p === 'object' ? JSON.stringify(p) : String(p)).toLowerCase();
+          return proteinasSolo.some(solo => textoRaioX.includes(solo));
         });
 
         if (temSolo) {
-          // REGRA DO PRATO ESPECIAL:
-          // Tem que ser EXATAMENTE 1 proteína (o prato especial) e 0 guarnições.
+          // REGRA DO PRATO ESPECIAL: Tem de ter EXATAMENTE 1 proteína e 0 guarnições.
           if (qtProteinas !== 1 || qtGuarnicoes !== 0) {
-            return true; // Inválido! Tentou misturar o especial com outras coisas.
+            return true; // Inválido! Misturou o prato especial com mais coisas.
           }
         } else {
-          // REGRA DO PRATO NORMAL:
-          // Exige de 1 a 4 guarnições E de 1 a 2 proteínas.
+          // REGRA DO PRATO NORMAL: Exige 1 a 4 guarnições E 1 a 2 proteínas.
           if (qtGuarnicoes < 1 || qtGuarnicoes > 4 || qtProteinas < 1 || qtProteinas > 2) {
-            return true; // Inválido! Faltou ou excedeu as quantidades da marmita normal.
+            return true; // Inválido!
           }
         }
 
-        // Se passou pelas regras acima, a marmita está perfeita!
+        // Se passou pelas regras, está aprovado
         return false;
       });
 
-      // 3. Se o fiscal encontrar erro, avisa o cliente:
+      // 3. Aviso de erro rigoroso
       if (invalid >= 0) {
         showErr(
           'orderError2',
-          `Marmita ${invalid + 1}: Pratos normais exigem de 1 a 4 guarnições e 1 a 2 proteínas. Pratos especiais (ex: Feijoada) não aceitam guarnições nem proteínas extras.`
+          `Marmita ${invalid + 1}: Pratos normais exigem de 1 a 4 guarnições e 1 a 2 proteínas. Pratos especiais (ex: Feijoada) não aceitam acompanhamentos.`
         );
         return false;
       }
