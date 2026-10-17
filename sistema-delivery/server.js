@@ -48,8 +48,6 @@ app.set('trust proxy', 1);
 app.use(cors({
   origin: [
     'http://localhost:3000',
-    'https://sistema-delivery-2wl.onrender.com',
-    'https://sistema-delivery-2in1.onrender.com',
     'https://sistema-delivery-two.vercel.app'
   ],
   credentials: true
