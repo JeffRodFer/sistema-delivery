@@ -1497,24 +1497,15 @@ app.use((req, res) => {
 });
 
 /* =========================================================
-   INICIAR SERVIDOR & ANTI-HIBERNAÇÃO
+   INICIAR SERVIDOR (Adaptado para Vercel Serverless)
    ========================================================= */
-app.listen(PORT, () => {
-  console.log(`Sistema Delivery rodando em http://localhost:${PORT}`);
+// O servidor só vai "escutar" a porta se estiver a rodar no seu computador (localmente)
+if (process.env.NODE_ENV !== 'production') {
+  const PORT = process.env.PORT || 3000;
+  app.listen(PORT, () => {
+    console.log(`Sistema Delivery a rodar localmente em http://localhost:${PORT}`);
+  });
+}
 
-  // --- ESTRATÉGIA ANTI-HIBERNAÇÃO (SELF-PING DO RENDER) ---
-  const RENDER_URL = process.env.RENDER_EXTERNAL_URL;
-
-  if (RENDER_URL) {
-    const PING_INTERVAL = 4 * 60 * 1000; // 14 minutos
-
-    setInterval(async () => {
-      try {
-        const response = await fetch(`${RENDER_URL}/api/config`);
-        console.log(`[Anti-SpinDown] Ping executado com sucesso: Status ${response.status}`);
-      } catch (error) {
-        console.error('[Anti-SpinDown] Erro ao executar ping:', error.message);
-      }
-    }, PING_INTERVAL);
-  }
-});
+// A linha mágica que exporta o seu backend para a Vercel Serverless
+module.exports = app;
