@@ -2030,25 +2030,46 @@
       );
 
 
-      const invalid =
-        orderState.marmitas
-          .findIndex(
-            m =>
-              m.proteinas.length < 1 ||
-              m.proteinas.length > 2 ||
-              m.guarnicoes.length > 4
-          );
+      // 1. Criamos a Lista VIP de pratos que não precisam de guarnição
+      const proteinasSolo = [
+        "Arrumadinho de charque",
+        "Arrumadinho de carne de sol",
+        "Cozido (Arroz, pirão, carne e legumes)",
+        "Feijoada",
+        "Yakisoba Especial"
+      ];
 
+      // 2. O fiscal analisa marmita por marmita
+      const invalid = orderState.marmitas.findIndex(m => {
 
+        // Verifica se a marmita tem alguma proteína da Lista VIP
+        const temSolo = m.proteinas.some(p => {
+          const nomeProteina = p.nome ? p.nome : p;
+          return proteinasSolo.includes(nomeProteina);
+        });
+
+        if (temSolo) {
+          // Se for prato VIP (Solo), NÃO é inválido. Passa direto!
+          return false;
+        } else {
+          // Se for prato NORMAL, aplica a regra 4+2 rigorosamente:
+          const proteinasInvalidas = m.proteinas.length < 1 || m.proteinas.length > 2;
+
+          // Agora exigimos que tenha no mínimo 1 e no máximo 4 guarnições
+          const guarnicoesInvalidas = m.guarnicoes.length < 1 || m.guarnicoes.length > 4;
+
+          // Se qualquer uma das regras falhar, a marmita é inválida (retorna true)
+          return proteinasInvalidas || guarnicoesInvalidas;
+        }
+      });
+
+      // 3. Se encontrou alguma marmita inválida, exibe o erro
       if (invalid >= 0) {
-
         showErr(
           'orderError2',
-          `Marmita ${invalid + 1}: escolha 1 ou 2 proteínas e no máximo 4 guarnições.`
+          `Marmita ${invalid + 1}: Pratos montados exigem de 1 a 4 guarnições e 1 a 2 proteínas. Pratos executivos (Feijoada, Yakisoba, etc) dispensam guarnições.`
         );
-
         return false;
-
       }
 
 
