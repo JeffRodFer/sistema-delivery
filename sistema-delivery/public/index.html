@@ -2029,6 +2029,8 @@
         'orderError2'
       );
 
+      // COLOCAR ESTA LINHA AQUI PARA VERMOS O QUE ESTÁ A CHEGAR
+      console.log("DADOS DA MARMITA:", JSON.stringify(orderState.marmitas, null, 2));
 
       const invalid = orderState.marmitas.findIndex(m => {
         const qtProteinas = m.proteinas.length;
